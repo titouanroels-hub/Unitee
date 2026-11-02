@@ -1,0 +1,1736 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#050510">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>Force & Carrière</title>
+<link rel="manifest" href="manifest.json">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
+<style>
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+:root {
+    --bg-0: #050510;
+    --glass: rgba(20, 20, 45, 0.55);
+    --glass-border: rgba(139, 92, 246, 0.25);
+    --cyan: #06b6d4;
+    --magenta: #ec4899;
+    --gold: #fbbf24;
+    --violet: #a855f7;
+    --emerald: #10b981;
+    --rose: #f43f5e;
+    --text-1: #f8fafc;
+    --text-2: #94a3b8;
+    --text-3: #64748b;
+}
+html, body { height: 100%; }
+body {
+    font-family: 'Inter', -apple-system, sans-serif;
+    background: var(--bg-0);
+    color: var(--text-1);
+    padding: 8px; margin: 0; min-height: 100vh;
+    display: flex; justify-content: center; align-items: center;
+    overflow-x: hidden;
+    padding-top: calc(8px + env(safe-area-inset-top));
+    padding-bottom: calc(8px + env(safe-area-inset-bottom));
+    position: relative;
+}
+body::before {
+    content: '';
+    position: fixed; inset: -50%;
+    background:
+        radial-gradient(circle at 20% 20%, rgba(168, 85, 247, 0.35) 0%, transparent 40%),
+        radial-gradient(circle at 80% 30%, rgba(236, 72, 153, 0.3) 0%, transparent 45%),
+        radial-gradient(circle at 40% 80%, rgba(6, 182, 212, 0.25) 0%, transparent 45%),
+        radial-gradient(circle at 90% 90%, rgba(251, 191, 36, 0.15) 0%, transparent 40%);
+    background-size: 200% 200%;
+    animation: aurora 20s ease-in-out infinite;
+    z-index: -1;
+    filter: blur(40px);
+}
+@keyframes aurora {
+    0%, 100% { background-position: 0% 0%, 100% 0%, 50% 100%, 100% 100%; }
+    50% { background-position: 100% 100%, 0% 100%, 50% 0%, 0% 0%; }
+}
+body.paused *, body.paused::before { animation-play-state: paused !important; }
+
+/* === MAIN CONTAINER === */
+.menu-screen, .game-container, .shop-screen, .gameover-screen, .history-screen,
+.apartment-screen, .badges-screen, .elite-screen {
+    width: 100%; max-width: 440px;
+    background: var(--glass);
+    backdrop-filter: blur(20px) saturate(150%);
+    -webkit-backdrop-filter: blur(20px) saturate(150%);
+    border: 1px solid var(--glass-border);
+    border-radius: 24px;
+    padding: 18px;
+    box-shadow:
+        0 30px 60px rgba(0, 0, 0, 0.9),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1),
+        0 0 80px rgba(168, 85, 247, 0.15);
+    text-align: center;
+    position: relative;
+    margin: auto;
+    overflow: hidden;
+}
+.menu-screen::before, .game-container::before, .shop-screen::before,
+.gameover-screen::before, .history-screen::before,
+.apartment-screen::before, .badges-screen::before, .elite-screen::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; height: 2px;
+    background: linear-gradient(90deg, transparent, var(--violet), var(--magenta), var(--gold), var(--cyan), transparent);
+    background-size: 200% 100%;
+    animation: borderFlow 3s linear infinite;
+}
+@keyframes borderFlow { 0% { background-position: 0% 0%; } 100% { background-position: 200% 0%; } }
+
+/* ============================================================
+   === MENU REDESIGN ===
+   ============================================================ */
+.menu-screen {
+    padding: 0;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Hero Section */
+.menu-hero {
+    position: relative;
+    height: 200px;
+    overflow: hidden;
+    background: linear-gradient(180deg, #0a0a20 0%, #2d1b69 100%);
+    flex-shrink: 0;
+}
+.hero-bg {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+}
+.hero-bg svg { width: 100%; height: 100%; display: block; }
+.hero-content {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    background: linear-gradient(180deg, transparent 0%, transparent 40%, rgba(5, 5, 16, 0.95) 100%);
+}
+.hero-eyebrow {
+    font-size: 9px;
+    color: var(--gold);
+    letter-spacing: 4px;
+    font-weight: 800;
+    margin-bottom: 6px;
+    text-shadow: 0 0 20px rgba(251, 191, 36, 0.8);
+}
+.hero-title {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 52px;
+    font-weight: 900;
+    letter-spacing: 10px;
+    margin: 0;
+    padding-left: 10px;
+    line-height: 1;
+    background: linear-gradient(135deg, #fbbf24 0%, #ec4899 50%, #a855f7 100%);
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: titleGradient 4s ease-in-out infinite;
+    filter: drop-shadow(0 4px 20px rgba(236, 72, 153, 0.6));
+}
+@keyframes titleGradient {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+}
+.hero-subtitle {
+    font-size: 10px;
+    letter-spacing: 8px;
+    color: var(--text-2);
+    font-weight: 700;
+    margin-top: 6px;
+    padding-left: 8px;
+}
+
+/* Status chips */
+.menu-status {
+    display: flex;
+    justify-content: center;
+    gap: 6px;
+    padding: 12px 16px 0;
+    flex-wrap: wrap;
+}
+.status-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 6px 12px;
+    background: rgba(30, 41, 59, 0.5);
+    border: 1px solid rgba(139, 92, 246, 0.3);
+    border-radius: 20px;
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--text-1);
+    backdrop-filter: blur(10px);
+}
+
+/* Primary actions */
+.menu-primary-actions {
+    padding: 12px 16px 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+.action-card {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px;
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.25), rgba(139, 92, 246, 0.15));
+    border: 1px solid rgba(139, 92, 246, 0.4);
+    border-radius: 14px;
+    text-align: left;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+    cursor: pointer;
+    width: 100%;
+    margin: 0;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+.action-card:hover {
+    border-color: rgba(139, 92, 246, 0.8);
+    box-shadow: 0 8px 30px rgba(139, 92, 246, 0.35);
+    transform: translateY(-2px);
+}
+.action-card:active { transform: translateY(0) scale(0.98); }
+.action-primary {
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.3), rgba(6, 182, 212, 0.2));
+    border-color: rgba(16, 185, 129, 0.5);
+}
+.action-primary:hover {
+    border-color: rgba(16, 185, 129, 0.9);
+    box-shadow: 0 8px 30px rgba(16, 185, 129, 0.4);
+}
+.action-icon {
+    width: 42px;
+    height: 42px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.35);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    font-size: 20px;
+    flex-shrink: 0;
+}
+.action-content { flex: 1; min-width: 0; }
+.action-title {
+    font-size: 14px;
+    font-weight: 800;
+    color: white;
+    letter-spacing: 0.5px;
+    margin-bottom: 2px;
+}
+.action-sub {
+    font-size: 10px;
+    color: rgba(148, 163, 184, 0.9);
+    font-weight: 600;
+}
+.action-arrow {
+    font-size: 26px;
+    color: rgba(255, 255, 255, 0.4);
+    font-weight: 300;
+    line-height: 1;
+    transition: transform 0.2s;
+}
+.action-card:hover .action-arrow { transform: translateX(4px); color: rgba(255, 255, 255, 0.9); }
+
+/* Secondary grid */
+.menu-secondary-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+    padding: 10px 16px 0;
+}
+.grid-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    padding: 14px 8px;
+    background: rgba(20, 20, 45, 0.6);
+    border: 1px solid rgba(139, 92, 246, 0.25);
+    border-radius: 14px;
+    position: relative;
+    cursor: pointer;
+    transition: all 0.25s;
+    backdrop-filter: blur(10px);
+    margin: 0;
+    width: 100%;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+}
+.grid-btn:hover {
+    background: rgba(30, 30, 60, 0.85);
+    border-color: rgba(139, 92, 246, 0.6);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(139, 92, 246, 0.3);
+}
+.grid-btn:active { transform: translateY(0) scale(0.96); }
+.grid-btn-icon { font-size: 22px; line-height: 1; }
+.grid-btn-label {
+    font-size: 10px;
+    font-weight: 800;
+    color: rgba(226, 232, 240, 0.9);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+.grid-btn-dot {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    width: 8px;
+    height: 8px;
+    background: var(--rose);
+    border-radius: 50%;
+    box-shadow: 0 0 10px var(--rose), 0 0 20px rgba(244, 63, 94, 0.5);
+    display: none;
+}
+.grid-btn-dot.active { display: block; animation: dotPulse 1.5s infinite; }
+@keyframes dotPulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.4); box-shadow: 0 0 20px var(--rose), 0 0 30px rgba(244, 63, 94, 0.8); }
+}
+
+/* Apartment + reset */
+.menu-apt-btn {
+    margin: 10px 16px 0;
+    padding: 12px;
+    background: linear-gradient(135deg, rgba(6, 182, 212, 0.2), rgba(59, 130, 246, 0.15));
+    border: 1px solid rgba(6, 182, 212, 0.4);
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 700;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    cursor: pointer;
+    transition: all 0.25s;
+    width: calc(100% - 32px);
+}
+.menu-apt-btn:hover {
+    border-color: rgba(6, 182, 212, 0.8);
+    box-shadow: 0 8px 20px rgba(6, 182, 212, 0.3);
+    transform: translateY(-1px);
+}
+.menu-reset-btn {
+    margin: 10px 16px 14px;
+    padding: 8px;
+    background: transparent;
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    border-radius: 10px;
+    font-size: 9px;
+    font-weight: 700;
+    color: rgba(248, 113, 113, 0.8);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.25s;
+    width: calc(100% - 32px);
+}
+.menu-reset-btn:hover {
+    background: rgba(239, 68, 68, 0.1);
+    border-color: rgba(239, 68, 68, 0.6);
+    color: #f87171;
+}
+.version-label {
+    font-size: 8px;
+    color: rgba(148, 163, 184, 0.4);
+    letter-spacing: 1.5px;
+    text-align: center;
+    padding-bottom: 10px;
+}
+
+/* ============================================================
+   === DIFFICULTY BAR ===
+   ============================================================ */
+.difficulty-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 6px 12px;
+    background: rgba(5, 5, 16, 0.6);
+    border: 1px solid rgba(148, 163, 184, 0.2);
+    border-radius: 8px;
+    margin-bottom: 8px;
+    font-size: 9px;
+    font-weight: 700;
+    backdrop-filter: blur(10px);
+    transition: border-color 0.3s;
+}
+.difficulty-icon { font-size: 12px; }
+.difficulty-label {
+    color: rgba(148, 163, 184, 0.7);
+    letter-spacing: 1px;
+    flex: 1;
+    text-align: center;
+}
+.difficulty-value {
+    font-weight: 900;
+    letter-spacing: 1px;
+    transition: color 0.3s;
+}
+
+/* === BUTTONS GAME === */
+button, .btn-start-game {
+    background: linear-gradient(180deg, rgba(59, 130, 246, 0.9), rgba(37, 99, 235, 0.9));
+    color: white;
+    border: 1px solid rgba(147, 197, 253, 0.3);
+    padding: 12px 16px;
+    font-size: 12px;
+    font-weight: 700;
+    border-radius: 12px;
+    width: 100%;
+    margin: 6px 0;
+    cursor: pointer;
+    font-family: inherit;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+    transition: transform 0.15s ease, box-shadow 0.2s ease, filter 0.2s;
+    text-align: center;
+    letter-spacing: 0.5px;
+}
+button::before, .btn-start-game::before {
+    content: '';
+    position: absolute;
+    top: 0; left: -100%;
+    width: 100%; height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.25), transparent);
+    transition: left 0.6s ease;
+    pointer-events: none;
+}
+button:hover::before, .btn-start-game:hover::before { left: 100%; }
+button:hover { filter: brightness(1.15); transform: translateY(-1px); }
+button:active { transform: scale(0.98); }
+.btn-tactique {
+    background: linear-gradient(180deg, rgba(239, 68, 68, 0.95), rgba(185, 28, 28, 0.95));
+    border-color: rgba(248, 113, 113, 0.4);
+    text-align: left;
+    box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+}
+.btn-doctrine {
+    background: linear-gradient(180deg, rgba(59, 130, 246, 0.95), rgba(29, 78, 216, 0.95));
+    border-color: rgba(96, 165, 250, 0.4);
+    text-align: left;
+    box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+}
+.btn-initiative {
+    background: linear-gradient(180deg, rgba(245, 158, 11, 0.95), rgba(180, 83, 9, 0.95));
+    border-color: rgba(252, 211, 77, 0.4);
+    text-align: left;
+    box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+}
+.btn-pause {
+    background: linear-gradient(180deg, rgba(16, 185, 129, 0.95), rgba(4, 120, 87, 0.95));
+    border-color: rgba(52, 211, 153, 0.4);
+    text-align: left;
+    box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+}
+.btn-ad {
+    background: linear-gradient(180deg, rgba(244, 63, 94, 0.95), rgba(190, 18, 60, 0.95));
+    border-color: rgba(251, 113, 133, 0.4);
+    box-shadow: 0 4px 15px rgba(244, 63, 94, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+}
+.reward-btn { position: relative; overflow: visible; }
+.reward-btn::after {
+    content: '🎬 PUB';
+    position: absolute;
+    top: -8px; right: -6px;
+    background: linear-gradient(135deg, #f59e0b, #dc2626);
+    color: white;
+    font-size: 7px;
+    font-weight: 900;
+    padding: 3px 7px;
+    border-radius: 6px;
+    letter-spacing: 0.8px;
+    box-shadow: 0 2px 10px rgba(220, 38, 38, 0.8), 0 0 20px rgba(251, 191, 36, 0.5);
+    animation: pubPulse 1.8s ease-in-out infinite;
+    z-index: 2;
+    border: 1px solid rgba(251, 191, 36, 0.6);
+}
+@keyframes pubPulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); box-shadow: 0 2px 20px rgba(251, 191, 36, 1), 0 0 30px rgba(251, 191, 36, 0.8); }
+}
+
+/* === SCREENS === */
+.game-container, .shop-screen, .gameover-screen, .history-screen,
+.apartment-screen, .badges-screen, .elite-screen { display: none; text-align: left; }
+h1 {
+    color: var(--text-1);
+    margin: 0 0 12px 0;
+    font-size: 14px;
+    font-weight: 900;
+    text-align: center;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    text-shadow: 0 0 20px rgba(168, 85, 247, 0.5);
+}
+.header-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+    font-size: 10px;
+    gap: 6px;
+}
+.day-counter {
+    color: var(--gold);
+    font-weight: 900;
+    font-size: 10px;
+    letter-spacing: 1px;
+    text-shadow: 0 0 10px rgba(251, 191, 36, 0.6);
+}
+.grade-badge {
+    background: linear-gradient(135deg, rgba(139, 92, 246, 0.3), rgba(59, 130, 246, 0.3));
+    color: #c4b5fd;
+    padding: 4px 9px;
+    border-radius: 6px;
+    font-weight: 800;
+    border: 1px solid rgba(139, 92, 246, 0.5);
+    font-size: 9px;
+    letter-spacing: 0.5px;
+    box-shadow: 0 0 12px rgba(139, 92, 246, 0.3), inset 0 1px 0 rgba(255,255,255,0.1);
+}
+.money-badge {
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.3), rgba(4, 120, 87, 0.3));
+    color: #6ee7b7;
+    padding: 4px 9px;
+    border-radius: 6px;
+    font-weight: 800;
+    border: 1px solid rgba(16, 185, 129, 0.5);
+    font-size: 9px;
+    letter-spacing: 0.5px;
+    box-shadow: 0 0 12px rgba(16, 185, 129, 0.3), inset 0 1px 0 rgba(255,255,255,0.1);
+    transition: all 0.3s;
+}
+.money-badge.bump { animation: moneyBump 0.6s cubic-bezier(0.34, 1.56, 0.64, 1); }
+@keyframes moneyBump {
+    0% { transform: scale(1); }
+    40% { transform: scale(1.25); box-shadow: 0 0 30px rgba(251, 191, 36, 1); }
+    100% { transform: scale(1); }
+}
+.btn-menu-top {
+    background: rgba(71, 85, 105, 0.6);
+    border: 1px solid rgba(148, 163, 184, 0.3);
+    padding: 5px 10px;
+    width: auto;
+    display: inline-block;
+    margin: 0;
+    font-size: 9px;
+    color: #e2e8f0;
+    backdrop-filter: blur(10px);
+}
+.agent-bar {
+    display: flex;
+    justify-content: space-between;
+    background: linear-gradient(135deg, rgba(139, 92, 246, 0.15), rgba(236, 72, 153, 0.1));
+    padding: 8px 10px;
+    border-radius: 10px;
+    margin-bottom: 8px;
+    font-size: 10px;
+    border: 1px solid rgba(139, 92, 246, 0.3);
+    backdrop-filter: blur(10px);
+}
+.agent-name {
+    color: #c4b5fd;
+    font-weight: 900;
+    letter-spacing: 1px;
+    text-shadow: 0 0 10px rgba(196, 181, 253, 0.5);
+}
+.streak-badge {
+    color: #fb923c;
+    font-weight: 900;
+    text-shadow: 0 0 10px rgba(251, 146, 60, 0.6);
+}
+.xp-container {
+    background: rgba(5, 5, 16, 0.8);
+    padding: 8px 10px;
+    border-radius: 10px;
+    margin-bottom: 8px;
+    border: 1px solid rgba(168, 85, 247, 0.3);
+    backdrop-filter: blur(10px);
+}
+.xp-bar-container {
+    width: 100%;
+    height: 8px;
+    background: rgba(30, 27, 75, 0.8);
+    border-radius: 4px;
+    overflow: hidden;
+    margin-top: 5px;
+    position: relative;
+}
+.xp-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #8b5cf6, #a855f7, #ec4899);
+    background-size: 200% 100%;
+    border-radius: 4px;
+    transition: width 0.4s ease;
+    box-shadow: 0 0 15px rgba(168, 85, 247, 0.8);
+    animation: xpFlow 3s linear infinite;
+    position: relative;
+}
+.xp-bar-fill::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+    animation: shimmer 2s linear infinite;
+}
+@keyframes xpFlow { 0% { background-position: 0% 0%; } 100% { background-position: 200% 0%; } }
+@keyframes shimmer { 0% { transform: translateX(-100%); } 100% { transform: translateX(100%); } }
+.mode-selector { display: flex; gap: 6px; margin-bottom: 8px; }
+.mode-btn {
+    flex: 1;
+    padding: 8px 4px;
+    font-size: 9px;
+    font-weight: 800;
+    background: rgba(30, 41, 59, 0.6);
+    border: 1px solid rgba(71, 85, 105, 0.5);
+    color: var(--text-2);
+    border-radius: 8px;
+    margin: 0;
+    backdrop-filter: blur(10px);
+    transition: all 0.3s ease;
+    letter-spacing: 0.5px;
+}
+.mode-btn.active {
+    background: linear-gradient(135deg, rgba(6, 182, 212, 0.4), rgba(59, 130, 246, 0.4));
+    color: white;
+    border-color: rgba(6, 182, 212, 0.8);
+    box-shadow: 0 0 20px rgba(6, 182, 212, 0.5), inset 0 1px 0 rgba(255,255,255,0.2);
+    transform: translateY(-1px);
+}
+.stats-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    background: rgba(5, 5, 16, 0.6);
+    padding: 10px;
+    border-radius: 12px;
+    margin-bottom: 10px;
+    border: 1px solid rgba(148, 163, 184, 0.15);
+    backdrop-filter: blur(10px);
+}
+.stat-box {
+    background: linear-gradient(135deg, rgba(30, 41, 59, 0.6), rgba(15, 23, 42, 0.6));
+    padding: 8px;
+    border-radius: 10px;
+    border: 1px solid rgba(148, 163, 184, 0.2);
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+}
+.stat-box.critical {
+    border-color: rgba(239, 68, 68, 0.8);
+    background: linear-gradient(135deg, rgba(127, 29, 29, 0.3), rgba(30, 41, 59, 0.6));
+    animation: critPulse 1s infinite;
+}
+@keyframes critPulse {
+    0%, 100% { box-shadow: 0 0 15px rgba(239, 68, 68, 0.4); }
+    50% { box-shadow: 0 0 30px rgba(239, 68, 68, 0.8); }
+}
+.stat-line {
+    display: flex;
+    justify-content: space-between;
+    font-size: 10px;
+    margin-bottom: 5px;
+    font-weight: 700;
+}
+.stat-bar-container {
+    width: 100%;
+    height: 6px;
+    background: rgba(30, 41, 59, 0.9);
+    border-radius: 3px;
+    overflow: hidden;
+    margin-bottom: 6px;
+    position: relative;
+}
+.stat-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #06b6d4, #3b82f6, #8b5cf6);
+    border-radius: 3px;
+    transition: width 0.4s ease, background 0.3s;
+    box-shadow: 0 0 10px rgba(59, 130, 246, 0.6);
+    position: relative;
+}
+.stat-bar-fill::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+    animation: shimmer 2.5s linear infinite;
+}
+.visual-stage {
+    width: 100%;
+    height: 160px;
+    border-radius: 14px;
+    border: 1px solid rgba(139, 92, 246, 0.4);
+    margin-bottom: 10px;
+    position: relative;
+    overflow: hidden;
+    background: #090d16;
+    box-shadow: inset 0 0 40px rgba(0, 0, 0, 0.9), 0 0 30px rgba(139, 92, 246, 0.3);
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    padding: 0 10px;
+}
+.theme-menu {
+    background: linear-gradient(135deg, #1e1b4b 0%, #311042 60%, #050510 100%);
+    align-items: center;
+    justify-content: center;
+}
+.cars-container {
+    position: absolute;
+    bottom: 40px;
+    left: 0;
+    width: 100%;
+    height: 50px;
+    z-index: 3;
+    pointer-events: none;
+    overflow: hidden;
+}
+.car { position: absolute; bottom: 0; }
+.car-fast { animation: driveFast 2s linear infinite; }
+.car-slow { animation: driveSlow 4s linear infinite; }
+@keyframes driveFast { 0% { left: 100%; } 100% { left: -100px; } }
+@keyframes driveSlow { 0% { left: 100%; } 100% { left: -150px; } }
+@keyframes siren { 0%, 100% { opacity: 0.3; filter: drop-shadow(0 0 5px #ef4444); } 50% { opacity: 1; filter: drop-shadow(0 0 20px #06b6d4); } }
+.siren { animation: siren 0.5s infinite; }
+@keyframes flame { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.2) translateY(-4px); filter: brightness(1.3); } }
+.flame-anim { animation: flame 0.5s infinite; }
+.dialogue-box {
+    background: linear-gradient(135deg, rgba(20, 20, 45, 0.8), rgba(5, 5, 16, 0.8));
+    border-left: 3px solid var(--gold);
+    padding: 10px 12px;
+    border-radius: 10px;
+    margin-bottom: 8px;
+    font-style: italic;
+    font-size: 11px;
+    border-top: 1px solid rgba(251, 191, 36, 0.2);
+    border-right: 1px solid rgba(251, 191, 36, 0.2);
+    border-bottom: 1px solid rgba(251, 191, 36, 0.2);
+    position: relative;
+    box-shadow: inset 0 0 25px rgba(251, 191, 36, 0.05), 0 0 15px rgba(0,0,0,0.5);
+    backdrop-filter: blur(10px);
+}
+.dialogue-box::before {
+    content: '❝';
+    position: absolute;
+    top: -8px;
+    left: 8px;
+    color: var(--gold);
+    font-size: 22px;
+    font-weight: 900;
+    filter: drop-shadow(0 0 5px rgba(251, 191, 36, 0.7));
+}
+.dialogue-author {
+    font-weight: 900;
+    color: var(--gold);
+    display: block;
+    font-style: normal;
+    font-size: 9px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    text-shadow: 0 0 10px rgba(251, 191, 36, 0.5);
+}
+.situation {
+    background: linear-gradient(135deg, rgba(20, 20, 45, 0.8), rgba(5, 5, 16, 0.8));
+    padding: 12px;
+    border-radius: 10px;
+    margin-bottom: 8px;
+    line-height: 1.4;
+    font-size: 11px;
+    border: 1px solid rgba(148, 163, 184, 0.2);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.05);
+    backdrop-filter: blur(10px);
+}
+.situation strong { color: #c4b5fd; }
+.btn-next {
+    background: linear-gradient(180deg, #10b981, #047857);
+    border: 1px solid rgba(52, 211, 153, 0.5);
+    text-align: center;
+    font-size: 14px;
+    padding: 16px;
+    font-weight: 900;
+    letter-spacing: 1px;
+    box-shadow: 0 4px 20px rgba(16, 185, 129, 0.4), inset 0 1px 0 rgba(255,255,255,0.2);
+}
+.btn-next.giant { animation: pulseNext 1.5s ease-in-out infinite; font-size: 15px; }
+@keyframes pulseNext {
+    0%, 100% { box-shadow: 0 4px 20px rgba(16, 185, 129, 0.4), inset 0 1px 0 rgba(255,255,255,0.2); }
+    50% { box-shadow: 0 4px 40px rgba(16, 185, 129, 0.8), inset 0 1px 0 rgba(255,255,255,0.3); }
+}
+.shop-item, .elite-item, .badge-item {
+    background: linear-gradient(135deg, rgba(20, 20, 45, 0.7), rgba(5, 5, 16, 0.7));
+    border: 1px solid rgba(148, 163, 184, 0.2);
+    padding: 12px;
+    border-radius: 10px;
+    margin-bottom: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 11px;
+    backdrop-filter: blur(10px);
+    transition: all 0.2s;
+}
+.shop-item:hover, .elite-item:hover, .badge-item:hover {
+    border-color: rgba(139, 92, 246, 0.6);
+    box-shadow: 0 0 20px rgba(139, 92, 246, 0.2);
+    transform: translateY(-1px);
+}
+.badge-item.earned {
+    border-color: rgba(251, 191, 36, 0.6);
+    background: linear-gradient(135deg, rgba(251, 191, 36, 0.15), rgba(20, 20, 45, 0.7));
+    box-shadow: 0 0 20px rgba(251, 191, 36, 0.2);
+}
+.badge-item.locked { opacity: 0.5; }
+.elite-item {
+    border-color: rgba(251, 191, 36, 0.3);
+    background: linear-gradient(135deg, rgba(180, 83, 9, 0.15), rgba(20, 20, 45, 0.7));
+}
+.history-list {
+    max-height: 240px;
+    overflow-y: auto;
+    text-align: left;
+    font-size: 10px;
+    background: rgba(5, 5, 16, 0.6);
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid rgba(148, 163, 184, 0.2);
+    margin-bottom: 10px;
+}
+.history-list::-webkit-scrollbar { width: 6px; }
+.history-list::-webkit-scrollbar-track { background: transparent; }
+.history-list::-webkit-scrollbar-thumb { background: rgba(139, 92, 246, 0.5); border-radius: 3px; }
+.ad-overlay, .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    z-index: 9999;
+    display: none;
+    justify-content: center;
+    align-items: center;
+    padding: 16px;
+    animation: fadeIn 0.3s ease;
+}
+.ad-overlay.active, .modal-overlay.active { display: flex; }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+.ad-card, .modal-card {
+    width: 100%;
+    max-width: 360px;
+    background: linear-gradient(180deg, rgba(30, 27, 75, 0.95), rgba(5, 5, 16, 0.98));
+    border: 1px solid rgba(251, 191, 36, 0.5);
+    border-radius: 20px;
+    padding: 24px 20px;
+    text-align: center;
+    box-shadow: 0 30px 80px rgba(0, 0, 0, 0.9), 0 0 60px rgba(251, 191, 36, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    animation: modalIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    position: relative;
+    overflow: hidden;
+}
+.ad-card::before, .modal-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; height: 2px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+}
+@keyframes modalIn {
+    from { transform: scale(0.85) translateY(30px); opacity: 0; }
+    to { transform: scale(1) translateY(0); opacity: 1; }
+}
+.modal-title {
+    font-size: 18px;
+    color: var(--gold);
+    font-weight: 900;
+    margin-bottom: 12px;
+    letter-spacing: 1.5px;
+    text-shadow: 0 0 20px rgba(251, 191, 36, 0.5);
+}
+.daily-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 6px;
+    margin-bottom: 16px;
+}
+.daily-cell {
+    background: rgba(5, 5, 16, 0.8);
+    border: 1px solid rgba(148, 163, 184, 0.2);
+    border-radius: 8px;
+    padding: 8px 6px;
+    font-size: 10px;
+    font-weight: 800;
+    transition: all 0.2s;
+}
+.daily-cell.claimed {
+    border-color: rgba(16, 185, 129, 0.6);
+    opacity: 0.5;
+    background: rgba(16, 185, 129, 0.1);
+}
+.daily-cell.today {
+    border-color: var(--gold);
+    background: linear-gradient(135deg, rgba(251, 191, 36, 0.2), rgba(251, 191, 36, 0.05));
+    box-shadow: 0 0 20px rgba(251, 191, 36, 0.4);
+    animation: todayPulse 1.5s ease-in-out infinite;
+}
+@keyframes todayPulse {
+    0%, 100% { box-shadow: 0 0 20px rgba(251, 191, 36, 0.4); }
+    50% { box-shadow: 0 0 30px rgba(251, 191, 36, 0.8); }
+}
+.agent-input {
+    width: 100%;
+    padding: 14px;
+    border-radius: 12px;
+    background: rgba(5, 5, 16, 0.9);
+    border: 2px solid rgba(148, 163, 184, 0.3);
+    color: white;
+    text-align: center;
+    font-size: 16px;
+    font-weight: 800;
+    margin-bottom: 14px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    font-family: 'Orbitron', sans-serif;
+    transition: all 0.2s;
+}
+.agent-input:focus {
+    outline: none;
+    border-color: var(--gold);
+    box-shadow: 0 0 25px rgba(251, 191, 36, 0.4);
+}
+#toast {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%) translateY(60px);
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.95), rgba(4, 120, 87, 0.95));
+    backdrop-filter: blur(10px);
+    color: white;
+    padding: 12px 22px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 800;
+    z-index: 10000;
+    opacity: 0;
+    transition: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+    pointer-events: none;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8), 0 0 30px rgba(16, 185, 129, 0.4);
+    letter-spacing: 0.5px;
+}
+#toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+.confetti {
+    position: fixed;
+    width: 8px;
+    height: 8px;
+    z-index: 9600;
+    pointer-events: none;
+    animation: confettiFall 2.5s linear forwards;
+    border-radius: 2px;
+}
+@keyframes confettiFall {
+    0% { transform: translateY(0) rotate(0); opacity: 1; }
+    100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+}
+.mission-success {
+    text-align: center;
+    font-size: 22px;
+    font-weight: 900;
+    color: var(--gold);
+    padding: 16px;
+    letter-spacing: 3px;
+    text-shadow: 0 0 30px rgba(251, 191, 36, 1), 0 0 60px rgba(251, 191, 36, 0.5);
+    animation: successPop 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+    font-family: 'Orbitron', sans-serif;
+}
+@keyframes successPop {
+    0% { transform: scale(0) rotate(-180deg); opacity: 0; }
+    60% { transform: scale(1.15) rotate(10deg); }
+    100% { transform: scale(1) rotate(0); opacity: 1; }
+}
+</style>
+</head>
+<body>
+
+<!-- MENU -->
+<div class="menu-screen" id="menu-screen" style="display: flex;">
+    <!-- Hero -->
+    <div class="menu-hero">
+        <div class="hero-bg">
+            <svg viewBox="0 0 440 200" preserveAspectRatio="xMidYMid slice">
+                <defs>
+                    <linearGradient id="skyGrad" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stop-color="#0a0a20"/>
+                        <stop offset="55%" stop-color="#2d1b69"/>
+                        <stop offset="100%" stop-color="#7c2d92"/>
+                    </linearGradient>
+                    <radialGradient id="moonGrad" cx="50%" cy="50%">
+                        <stop offset="0%" stop-color="#fef3c7"/>
+                        <stop offset="60%" stop-color="#fbbf24"/>
+                        <stop offset="100%" stop-color="#f59e0b" stop-opacity="0"/>
+                    </radialGradient>
+                </defs>
+                <rect width="440" height="200" fill="url(#skyGrad)"/>
+                <circle cx="345" cy="55" r="35" fill="url(#moonGrad)" opacity="0.85"/>
+                <circle cx="345" cy="55" r="20" fill="#fef3c7"/>
+                <circle cx="48" cy="35" r="1.5" fill="white" opacity="0.9"/>
+                <circle cx="120" cy="55" r="1" fill="white" opacity="0.6"/>
+                <circle cx="200" cy="30" r="1.5" fill="white" opacity="0.7"/>
+                <circle cx="280" cy="65" r="1" fill="white" opacity="0.5"/>
+                <circle cx="400" cy="45" r="1" fill="white" opacity="0.7"/>
+                <rect x="0" y="105" width="60" height="95" fill="#0a0a20"/>
+                <rect x="60" y="125" width="70" height="75" fill="#0f0f2a"/>
+                <rect x="130" y="95" width="50" height="105" fill="#0a0a20"/>
+                <rect x="180" y="135" width="60" height="65" fill="#0f0f2a"/>
+                <rect x="240" y="115" width="80" height="85" fill="#0a0a20"/>
+                <rect x="320" y="145" width="60" height="55" fill="#0f0f2a"/>
+                <rect x="380" y="125" width="60" height="75" fill="#0a0a20"/>
+                <rect x="15" y="120" width="6" height="8" fill="#fbbf24" opacity="0.7"/>
+                <rect x="30" y="120" width="6" height="8" fill="#06b6d4" opacity="0.6"/>
+                <rect x="70" y="140" width="6" height="8" fill="#fbbf24" opacity="0.5"/>
+                <rect x="90" y="140" width="6" height="8" fill="#fbbf24" opacity="0.4"/>
+                <rect x="140" y="110" width="6" height="8" fill="#06b6d4" opacity="0.7"/>
+                <rect x="200" y="150" width="6" height="8" fill="#fbbf24" opacity="0.5"/>
+                <rect x="250" y="130" width="6" height="8" fill="#ec4899" opacity="0.6"/>
+                <rect x="285" y="130" width="6" height="8" fill="#fbbf24" opacity="0.5"/>
+                <rect x="395" y="140" width="6" height="8" fill="#06b6d4" opacity="0.5"/>
+                <rect x="0" y="168" width="440" height="32" fill="#0a0a15"/>
+                <line x1="20" y1="186" x2="420" y2="186" stroke="#fbbf24" stroke-width="2" stroke-dasharray="30,20" opacity="0.4"/>
+                <g transform="translate(175, 148)">
+                    <rect x="0" y="15" width="90" height="22" rx="6" fill="#0a0a20" stroke="#06b6d4" stroke-width="1.5"/>
+                    <circle cx="20" cy="40" r="7" fill="#050510" stroke="#06b6d4" stroke-width="1"/>
+                    <circle cx="70" cy="40" r="7" fill="#050510" stroke="#06b6d4" stroke-width="1"/>
+                    <rect x="12" y="20" width="22" height="11" rx="2" fill="#1e40af" opacity="0.8"/>
+                    <rect x="58" y="20" width="22" height="11" rx="2" fill="#1e40af" opacity="0.8"/>
+                    <rect x="38" y="7" width="14" height="8" rx="3" fill="#f43f5e" class="siren"/>
+                </g>
+            </svg>
+        </div>
+        <div class="hero-content">
+            <div class="hero-eyebrow">🚔 POLICE NATIONALE</div>
+            <div class="hero-title">FORCE</div>
+            <div class="hero-subtitle">CARRIÈRE</div>
+        </div>
+    </div>
+
+    <!-- Status -->
+    <div class="menu-status" id="menu-status" style="display: none;">
+        <div class="status-chip"><span>⭐</span><span id="status-medals">0</span></div>
+        <div class="status-chip"><span>🔥</span><span id="status-streak">0j</span></div>
+        <div class="status-chip"><span>🎖️</span><span id="status-grade">Gardien</span></div>
+    </div>
+
+    <!-- Primary actions -->
+    <div class="menu-primary-actions">
+        <button type="button" class="action-card action-primary" id="btn-continue" onclick="resumeGame()" style="display: none;">
+            <div class="action-icon">▶</div>
+            <div class="action-content">
+                <div class="action-title">Reprendre</div>
+                <div class="action-sub">Cycle <span id="save-cycle">1</span> · Jour <span id="save-day">1</span></div>
+            </div>
+            <div class="action-arrow">›</div>
+        </button>
+        <button type="button" class="action-card action-primary" onclick="startNewCareer()" style="background: linear-gradient(135deg, rgba(59, 130, 246, 0.25), rgba(139, 92, 246, 0.15)); border-color: rgba(59, 130, 246, 0.5);">
+            <div class="action-icon">🎮</div>
+            <div class="action-content">
+                <div class="action-title">Nouvelle carrière</div>
+                <div class="action-sub">Commencer à zéro</div>
+            </div>
+            <div class="action-arrow">›</div>
+        </button>
+    </div>
+
+    <!-- Secondary grid -->
+    <div class="menu-secondary-grid">
+        <button type="button" class="grid-btn" onclick="openDaily()">
+            <span class="grid-btn-icon">🎁</span>
+            <span class="grid-btn-label">Quotidien</span>
+            <span class="grid-btn-dot" id="daily-dot"></span>
+        </button>
+        <button type="button" class="grid-btn" onclick="openElite()">
+            <span class="grid-btn-icon">⭐</span>
+            <span class="grid-btn-label">Élite</span>
+        </button>
+        <button type="button" class="grid-btn" onclick="openBadges()">
+            <span class="grid-btn-icon">🏆</span>
+            <span class="grid-btn-label">Succès</span>
+        </button>
+        <button type="button" class="grid-btn" onclick="openShop()">
+            <span class="grid-btn-icon">🛒</span>
+            <span class="grid-btn-label">Boutique</span>
+        </button>
+    </div>
+
+    <button type="button" class="menu-apt-btn" onclick="openApartment()">
+        <span>🏠</span> Appartement / Planque
+    </button>
+
+    <button type="button" class="menu-reset-btn" onclick="resetCareer()">
+        ⚠️ Effacer la sauvegarde
+    </button>
+
+    <div class="version-label">v2.1 PREMIUM</div>
+</div>
+
+<!-- ELITE -->
+<div class="elite-screen" id="elite-screen">
+    <div class="header-info"><button type="button" class="btn-menu-top" onclick="goToMenu()">🔙 Menu</button><span class="grade-badge">⭐ ÉLITE</span><span class="money-badge" id="elite-medals">0 ⭐</span></div>
+    <h1>Boutique Élite</h1>
+    <div id="elite-items-container"></div>
+</div>
+
+<!-- BADGES -->
+<div class="badges-screen" id="badges-screen">
+    <div class="header-info"><button type="button" class="btn-menu-top" onclick="goToMenu()">🔙 Menu</button><span class="grade-badge">🏆 SUCCÈS</span><span id="badges-count" style="font-size:10px; color:#94a3b8;">0/0</span></div>
+    <h1>Succès</h1>
+    <div id="badges-list"></div>
+    <button type="button" class="btn-next" onclick="goToMenu()" style="margin-top:10px;">Retour</button>
+</div>
+
+<!-- SHOP -->
+<div class="shop-screen" id="shop-screen">
+    <div class="header-info"><button type="button" class="btn-menu-top" onclick="goToMenu()">🔙 Menu</button><span class="grade-badge" id="shop-grade">GARDIEN</span><span class="money-badge" id="shop-money">0 €</span></div>
+    <h1>Boutique</h1>
+    <button type="button" class="btn-ad reward-btn" onclick="watchAdForMoney()">🎬 Pub +300 €</button>
+    <div id="shop-items-container"></div>
+</div>
+
+<!-- APARTMENT -->
+<div class="apartment-screen" id="apartment-screen">
+    <div class="header-info"><button type="button" class="btn-menu-top" onclick="goToMenu()">🔙 Menu</button><span class="grade-badge" id="appart-grade">GARDIEN</span><span class="money-badge" id="appart-money">0 €</span></div>
+    <h1>Appartement</h1>
+    <button type="button" class="btn-ad reward-btn" onclick="watchAdForMoney()">🎬 Pub +300 €</button>
+    <div id="apartment-content"></div>
+    <button type="button" class="btn-next" onclick="goToMenu()" style="margin-top:10px;">Retour</button>
+</div>
+
+<!-- HISTORY -->
+<div class="history-screen" id="history-screen">
+    <div class="header-info"><button type="button" class="btn-menu-top" onclick="closeHistory()">🔙 Retour</button><span class="grade-badge">JOURNAL</span></div>
+    <h1>Historique</h1>
+    <div class="history-list" id="history-list-container"></div>
+    <button type="button" class="btn-next" onclick="closeHistory()">Fermer</button>
+</div>
+
+<!-- GAME -->
+<div class="game-container" id="game-container">
+    <div class="header-info">
+        <button type="button" class="btn-menu-top" onclick="goToMenu()">🔙 Menu</button>
+        <span class="day-counter" id="day-display">JOUR 1 / 30</span>
+        <span class="grade-badge" id="player-grade">GARDIEN</span>
+        <span class="money-badge" id="player-money">0 €</span>
+    </div>
+    <div class="agent-bar">
+        <span class="agent-name" id="agent-display">AGENT X</span>
+        <span class="streak-badge" id="streak-display">🔥 0 j</span>
+    </div>
+    <div class="weather-badge" style="display:flex; justify-content:space-between; align-items:center; font-size:10px; margin-bottom:8px; color:#94a3b8; font-style:italic;">
+        <span id="weather-display">☀️ Jour</span>
+        <button type="button" class="btn-menu-top" onclick="openHistory()" style="font-size:8px;">📜 Journal</button>
+    </div>
+    <div class="xp-container">
+        <div class="stat-line" style="font-size:9px; margin-bottom:4px;"><span style="color:#94a3b8;">NIVEAU <span id="xp-level" style="color:#a78bfa; font-weight:900;">1</span></span><span id="xp-display" style="color:#94a3b8;">0 / 100 XP</span></div>
+        <div class="xp-bar-container"><div class="xp-bar-fill" id="xp-bar"></div></div>
+    </div>
+    <div class="mode-selector">
+        <button type="button" class="mode-btn" data-mode="manif" onclick="changeMode('manif')">🚨 Foule</button>
+        <button type="button" class="mode-btn" data-mode="stade" onclick="changeMode('stade')">⚽ Stade</button>
+        <button type="button" class="mode-btn" data-mode="trafic" onclick="changeMode('trafic')">🚔 Route</button>
+    </div>
+    <!-- DIFFICULTY BAR -->
+    <div class="difficulty-bar" id="difficulty-bar">
+        <span class="difficulty-icon">⚡</span>
+        <span class="difficulty-label">DIFFICULTÉ</span>
+        <span class="difficulty-value" id="difficulty-value" style="color:#10b981;">RECRUE</span>
+    </div>
+    <div class="stats-grid">
+        <div class="stat-box" id="box-ordre"><div class="stat-line"><span style="color:#94a3b8;">ORDRE</span><span id="stat-ordre" style="color:#06b6d4;">50%</span></div><div class="stat-bar-container"><div class="stat-bar-fill" id="bar-ordre" style="width:50%;"></div></div><button type="button" class="btn-ad reward-btn" style="padding:5px; font-size:8px;" onclick="watchAdForStat('ordre')">🎬 +50%</button></div>
+        <div class="stat-box" id="box-prefet"><div class="stat-line"><span style="color:#94a3b8;">PRÉFET</span><span id="stat-prefet" style="color:#06b6d4;">50%</span></div><div class="stat-bar-container"><div class="stat-bar-fill" id="bar-prefet" style="width:50%;"></div></div><button type="button" class="btn-ad reward-btn" style="padding:5px; font-size:8px;" onclick="watchAdForStat('prefet')">🎬 +50%</button></div>
+        <div class="stat-box" id="box-medias"><div class="stat-line"><span style="color:#94a3b8;">MÉDIAS</span><span id="stat-medias" style="color:#06b6d4;">50%</span></div><div class="stat-bar-container"><div class="stat-bar-fill" id="bar-medias" style="width:50%;"></div></div><button type="button" class="btn-ad reward-btn" style="padding:5px; font-size:8px;" onclick="watchAdForStat('medias')">🎬 +50%</button></div>
+        <div class="stat-box" id="box-moral"><div class="stat-line"><span style="color:#94a3b8;">MORAL</span><span id="stat-moral" style="color:#06b6d4;">50%</span></div><div class="stat-bar-container"><div class="stat-bar-fill" id="bar-moral" style="width:50%;"></div></div><button type="button" class="btn-ad reward-btn" style="padding:5px; font-size:8px;" onclick="watchAdForStat('moral')">🎬 +50%</button></div>
+    </div>
+    <div class="visual-stage" id="visual-stage">
+        <div id="stage-visual-elements" style="position:absolute; inset:0;"></div>
+        <div id="cars-layer" class="cars-container"></div>
+    </div>
+    <div class="dialogue-box">
+        <span class="dialogue-author" id="dialogue-speaker">Radio</span>
+        <span id="dialogue-text">« Unité Alpha. »</span>
+    </div>
+    <div class="situation" id="situation-text">Initialisation...</div>
+    <div id="choices-container"></div>
+</div>
+
+<!-- GAME OVER -->
+<div class="gameover-screen" id="gameover-screen">
+    <div class="header-info"><button type="button" class="btn-menu-top" onclick="goToMenu()">🔙 Menu</button></div>
+    <h1 style="color:#f43f5e;">Fin de carrière</h1>
+    <div class="dialogue-box"><span class="dialogue-author">Rapport</span><span id="end-text">Radié.</span></div>
+    <div id="revive-container" style="margin-top:8px;"></div>
+    <button type="button" class="btn-next" onclick="restartCareerKeepMedals()" style="background:linear-gradient(180deg,#991b1b,#450a0a); margin-top:6px;">🔄 Recommencer (Médailles conservées)</button>
+</div>
+
+<!-- OVERLAYS -->
+<div class="ad-overlay" id="ad-overlay"><div class="ad-card"><div class="modal-title">🎬 Publicité</div><div style="font-size:24px; font-weight:900; color:#fbbf24; margin:20px 0; text-shadow: 0 0 20px rgba(251,191,36,0.7);" id="ad-reward-value">+300 €</div><button type="button" class="btn-next" id="btn-claim-reward" disabled>⏳ Patientez (5s)</button><button type="button" class="btn-menu-top" onclick="closeAdOverlay()" style="margin-top:10px; width:100%; display:none;" id="ad-close">✕ Fermer</button></div></div>
+<div class="modal-overlay" id="daily-modal"><div class="modal-card"><div class="modal-title">🎁 Récompense Journalière</div><div id="daily-sub" style="margin-bottom:14px; font-size:12px;"></div><div class="daily-grid" id="daily-grid"></div><button type="button" class="btn-next" id="btn-claim-daily" onclick="claimDailyReward()">🎁 Récupérer</button><button type="button" class="btn-menu-top" onclick="document.getElementById('daily-modal').classList.remove('active')" style="margin-top:10px; width:100%;">Fermer</button></div></div>
+<div class="modal-overlay" id="agent-modal"><div class="modal-card"><div class="modal-title">👮 Création d'agent</div><input type="text" class="agent-input" id="agent-name-input" maxlength="15" placeholder="AGENT X" autocomplete="off"><button type="button" class="btn-next" onclick="confirmAgentName()">Commencer</button></div></div>
+<div id="toast"></div>
+
+<script>
+let audioCtx = null;
+function playSound(type) {
+    try {
+        if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+        const osc = audioCtx.createOscillator(), g = audioCtx.createGain();
+        osc.connect(g); g.connect(audioCtx.destination);
+        const n = audioCtx.currentTime;
+        if (type === 'click') { osc.type='sine'; osc.frequency.setValueAtTime(600,n); osc.frequency.exponentialRampToValueAtTime(300,n+.08); g.gain.setValueAtTime(.08,n); g.gain.exponentialRampToValueAtTime(.01,n+.08); osc.start(n); osc.stop(n+.08); }
+        else if (type === 'action') { osc.type='triangle'; osc.frequency.setValueAtTime(220,n); osc.frequency.exponentialRampToValueAtTime(440,n+.15); g.gain.setValueAtTime(.12,n); g.gain.exponentialRampToValueAtTime(.01,n+.15); osc.start(n); osc.stop(n+.15); }
+        else if (type === 'reward') { osc.type='sine'; osc.frequency.setValueAtTime(330,n); osc.frequency.setValueAtTime(440,n+.1); osc.frequency.setValueAtTime(660,n+.2); g.gain.setValueAtTime(.12,n); g.gain.exponentialRampToValueAtTime(.01,n+.35); osc.start(n); osc.stop(n+.35); }
+    } catch(e) {}
+}
+function showToast(msg, color) {
+    const t = document.getElementById('toast'); t.innerText = msg;
+    t.style.background = color === 'error' ? 'linear-gradient(135deg, rgba(239,68,68,0.95), rgba(185,28,28,0.95))'
+                        : color === 'warning' ? 'linear-gradient(135deg, rgba(245,158,11,0.95), rgba(180,83,9,0.95))'
+                        : color === 'gold' ? 'linear-gradient(135deg, rgba(251,191,36,0.95), rgba(180,83,9,0.95))'
+                        : 'linear-gradient(135deg, rgba(16,185,129,0.95), rgba(4,120,87,0.95))';
+    if (color === 'gold') t.style.color = '#0a0512'; else t.style.color = 'white';
+    t.classList.add('show'); clearTimeout(t._t); t._t = setTimeout(() => t.classList.remove('show'), 2800);
+}
+
+const SAVE_KEY = 'force_carriere_save';
+const XP_PER_MISSION = 25;
+const XP_PER_LEVEL = [0, 100, 250, 500, 800, 1200, 1800, 2500, 3500, 5000, 7000];
+const DAILY_REWARDS = [100, 150, 200, 300, 400, 600, 800];
+const DAILY_COOLDOWN_MS = 24 * 60 * 60 * 1000;
+const grades = ["GARDIEN STAGIAIRE","GARDIEN TITULAIRE","BRIGADIER","BRIGADIER-CHEF","MAJOR DE POLICE","LIEUTENANT","CAPITAINE","COMMANDANT","COMMISSAIRE","COMMISSAIRE DIVISIONNAIRE","SUPERINTENDANT GÉNÉRAL"];
+const salaries = [15, 22, 30, 45, 60, 80, 105, 130, 160, 200, 250];
+const MODE_LABELS = { manif: { short:'🚨 Foule', long:'Gestion de Foule' }, stade: { short:'⚽ Stade', long:'Sécurité Événementielle' }, trafic: { short:'🚔 Route', long:'Régulation Routière' } };
+
+// ============================================================
+// === DIFFICULTÉ PROGRESSIVE ===
+// ============================================================
+const DIFFICULTY_TIERS = [
+    { name: "RECRUE",    color: "#10b981", mult: 0.5, minAbsDay: 1  },
+    { name: "AGENT",     color: "#06b6d4", mult: 0.75, minAbsDay: 11 },
+    { name: "VÉTÉRAN",   color: "#f59e0b", mult: 1.0, minAbsDay: 21 },
+    { name: "ÉLITE",     color: "#ec4899", mult: 1.25, minAbsDay: 31 },
+    { name: "LÉGENDE",   color: "#a855f7", mult: 1.55, minAbsDay: 51 },
+    { name: "CAUCHEMAR", color: "#f43f5e", mult: 1.9, minAbsDay: 71 }
+];
+
+function getDifficulty() {
+    const absDay = (cycle - 1) * 30 + day;
+    let tier = DIFFICULTY_TIERS[0];
+    for (const t of DIFFICULTY_TIERS) {
+        if (absDay >= t.minAbsDay) tier = t;
+    }
+    return tier;
+}
+function applyDifficulty(effects) {
+    const mult = getDifficulty().mult;
+    const result = {};
+    for (const s in effects) {
+        const v = effects[s];
+        result[s] = v > 0 ? v : Math.round(v * mult);
+    }
+    return result;
+}
+
+const PERKS_LIST = [
+    { id: 'money', name: 'Contrat Initial', desc: 'Commencer avec 500 €', cost: 3, icon: '💵' },
+    { id: 'equip', name: 'Équipement Élite', desc: 'Gilet + Taser gratuits', cost: 5, icon: '🛡️' },
+    { id: 'stats', name: 'Formation', desc: 'Stats de départ à 70%', cost: 4, icon: '📊' },
+    { id: 'prefet', name: 'Réseau Politique', desc: 'Préfet de départ à 85%', cost: 4, icon: '🏛️' },
+    { id: 'xp', name: 'Formation Accélérée', desc: '+50% d\'XP', cost: 6, icon: '📈' }
+];
+const ALL_BADGES = [
+    { id:'first_mission', icon:'🎯', name:'Première Patrouille', desc:'Terminer 1 mission' },
+    { id:'ten_missions',  icon:'🔟', name:'Vétéran',             desc:'Terminer 10 missions' },
+    { id:'fifty_missions', icon:'💯', name:'Briscard',           desc:'Terminer 50 missions' },
+    { id:'rich_1k',        icon:'💵', name:'Économe',            desc:'Atteindre 1 000 €' },
+    { id:'rich_5k',        icon:'💰', name:'Riche',              desc:'Atteindre 5 000 €' },
+    { id:'rich_10k',       icon:'🏦', name:'Fortuné',            desc:'Atteindre 10 000 €' },
+    { id:'no_bavure_5',    icon:'🛡️', name:'Sang-Froid',        desc:'5 missions sans bavure' },
+    { id:'promotion',      icon:'⭐', name:'Promu',              desc:'Obtenir une promotion' },
+    { id:'full_stats',     icon:'📊', name:'Équilibré',          desc:'Toutes stats ≥ 80%' },
+    { id:'week_streak',    icon:'🔥', name:'Fidèle',             desc:'7 jours de suite' },
+    { id:'xp_level_5',     icon:'🎖️', name:'Expérimenté',       desc:'Atteindre le niveau 5' },
+    { id:'all_modes',      icon:'🔀', name:'Polyvalent',         desc:'Jouer les 3 modes' }
+];
+
+let day = 1, cycle = 1, gradeIdx = 0, money = 100;
+let stats = { ordre:55, prefet:55, medias:55, moral:55 };
+let cons = { text:"Début", ordre:0, prefet:0, medias:0, moral:0 };
+let currentMissionType = 'manif';
+let inventory = { gilet:false, taser:false, appart:false, maison:false, club:false };
+let bavureStreak = 0, noBavureStreak = 0;
+let missionHistory = [], usedElementsMemory = [], missionCount = 0;
+let xp = 0, xpLevel = 1, streak = 0, lastPlayDate = null, lastDailyClaim = 0;
+let agentName = '', earnedBadges = [], modesPlayed = { manif:false, stade:false, trafic:false };
+let medals = 0, perks = { money: false, equip: false, stats: false, prefet: false, xp: false }, currentRunXpMultiplier = 1;
+let stateLoaded = false, currentEvent = null, currentScenarioText = '', isNight = false, currentScenarioLieu = '';
+let adActiveCallback = null, adCountdownInterval = null;
+
+function applyDefaultState() {
+    day=1; cycle=1; gradeIdx=0; money=100; stats={ordre:55,prefet:55,medias:55,moral:55};
+    cons={text:"Début",ordre:0,prefet:0,medias:0,moral:0}; inventory={gilet:false,taser:false,appart:false,maison:false,club:false};
+    bavureStreak=0; noBavureStreak=0; missionHistory=[]; usedElementsMemory=[]; missionCount=0; xp=0; xpLevel=1;
+    streak=0; lastPlayDate=null; lastDailyClaim=0; agentName=''; earnedBadges=[]; modesPlayed={manif:false,stade:false,trafic:false};
+    currentMissionType='manif'; medals=0; perks={ money: false, equip: false, stats: false, prefet: false, xp: false }; currentRunXpMultiplier=1;
+    stateLoaded=true;
+}
+function loadStateFromSave(data) {
+    day = data.day ?? 1; cycle = data.cycle ?? 1; gradeIdx = data.gradeIdx ?? 0; money = data.money ?? 100;
+    stats = data.stats ?? {ordre:55,prefet:55,medias:55,moral:55}; cons = data.cons ?? {text:"Début",ordre:0,prefet:0,medias:0,moral:0};
+    inventory = data.inventory ?? {gilet:false,taser:false,appart:false,maison:false,club:false}; currentMissionType = data.currentMissionType ?? 'manif';
+    bavureStreak = data.bavureStreak ?? 0; noBavureStreak = data.noBavureStreak ?? 0; usedElementsMemory = data.usedElementsMemory ?? [];
+    missionHistory = data.missionHistory ?? []; missionCount = data.missionCount ?? 0; xp = data.xp ?? 0; xpLevel = data.xpLevel ?? 1;
+    streak = data.streak ?? 0; lastPlayDate = data.lastPlayDate ?? null; lastDailyClaim = data.lastDailyClaim ?? 0; agentName = data.agentName ?? '';
+    earnedBadges = data.earnedBadges ?? []; modesPlayed = data.modesPlayed ?? {manif:false,stade:false,trafic:false};
+    medals = data.medals ?? 0; perks = data.perks ?? { money: false, equip: false, stats: false, prefet: false, xp: false };
+    currentRunXpMultiplier = data.currentRunXpMultiplier ?? 1; stateLoaded = true;
+}
+function ensureStateLoaded() { if (stateLoaded) return; const saved = localStorage.getItem(SAVE_KEY); if (saved) { try { loadStateFromSave(JSON.parse(saved)); return; } catch(e){} } applyDefaultState(); }
+
+function checkAndLoadSave() {
+    const saved = localStorage.getItem(SAVE_KEY);
+    const btn = document.getElementById('btn-continue');
+    const status = document.getElementById('menu-status');
+    const dailyDot = document.getElementById('daily-dot');
+    if (saved) {
+        try {
+            const data = JSON.parse(saved);
+            if (data && typeof data.day === 'number' && data.agentName) {
+                document.getElementById('save-cycle').innerText = data.cycle ?? 1;
+                document.getElementById('save-day').innerText = data.day;
+                btn.style.display = 'flex';
+                status.style.display = 'flex';
+                document.getElementById('status-medals').innerText = data.medals ?? 0;
+                document.getElementById('status-streak').innerText = (data.streak ?? 0) + 'j';
+                const gradeShort = (grades[data.gradeIdx ?? 0] || 'GARDIEN').split(' ')[0];
+                document.getElementById('status-grade').innerText = gradeShort;
+                const lastDaily = data.lastDailyClaim ?? 0;
+                if (!lastDaily || Date.now() - lastDaily >= DAILY_COOLDOWN_MS) dailyDot.classList.add('active');
+                else dailyDot.classList.remove('active');
+                return;
+            }
+        } catch(e) {}
+    }
+    btn.style.display = 'none';
+    status.style.display = 'none';
+    dailyDot.classList.add('active');
+}
+
+function saveGame() {
+    try { localStorage.setItem(SAVE_KEY, JSON.stringify({ day, cycle, gradeIdx, money, stats, cons, inventory, currentMissionType, bavureStreak, noBavureStreak, usedElementsMemory, missionHistory, missionCount, xp, xpLevel, streak, lastPlayDate, lastDailyClaim, agentName, earnedBadges, modesPlayed, medals, perks, currentRunXpMultiplier })); } catch(e){}
+}
+window.onload = () => { checkAndLoadSave(); document.addEventListener('visibilitychange', () => document.body.classList.toggle('paused', document.hidden)); };
+
+function getTodayStr() { const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; }
+function getYesterdayStr() { const d = new Date(); d.setDate(d.getDate() - 1); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; }
+function checkStreakReset() { const today = getTodayStr(), yesterday = getYesterdayStr(); if (lastPlayDate && lastPlayDate !== today && lastPlayDate !== yesterday) streak = 0; }
+function updateStreakOnPlay() { const today = getTodayStr(), yesterday = getYesterdayStr(); if (lastPlayDate === today) return; if (lastPlayDate === yesterday) streak++; else streak = 1; lastPlayDate = today; }
+function getTimeUntilNextDaily() { if (!lastDailyClaim) return 0; return Math.max(0, DAILY_COOLDOWN_MS - (Date.now() - lastDailyClaim)); }
+function showDailyModalIfNeeded() { if (getTimeUntilNextDaily() === 0) { showDailyModal(); return true; } return false; }
+function openDaily() { playSound('click'); showDailyModal(); }
+function showDailyModal() {
+    const timeLeft = getTimeUntilNextDaily(); const grid = document.getElementById('daily-grid'); grid.innerHTML = '';
+    let currentDay = (streak % 7) + 1; if (streak === 0) currentDay = 1;
+    for (let i = 1; i <= 7; i++) {
+        const cell = document.createElement('div'); cell.className = 'daily-cell';
+        if (i < currentDay) cell.classList.add('claimed');
+        if (i === currentDay && timeLeft === 0) cell.classList.add('today');
+        cell.innerHTML = `<div style="font-size:8px; color:#94a3b8;">J${i}</div><div style="color:#06b6d4;">${DAILY_REWARDS[i-1]}€</div>`;
+        grid.appendChild(cell);
+    }
+    const sub = document.getElementById('daily-sub'); const btn = document.getElementById('btn-claim-daily');
+    if (timeLeft > 0) {
+        const h = Math.floor(timeLeft / (1000 * 60 * 60)); const m = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
+        sub.innerHTML = `<span style="color:#f43f5e; font-weight:900;">⏳ RECHARGE</span><br>Dans ${h}h ${m}m`;
+        btn.innerText = `⏳ PATIENTER`; btn.disabled = true; btn.style.opacity = '0.5';
+    } else {
+        sub.innerHTML = `<span style="color:#fbbf24; font-weight:900; font-size:20px;">+${DAILY_REWARDS[currentDay - 1]} €</span><br>Série : ${streak} j 🔥`;
+        btn.innerText = `🎁 RÉCUPÉRER`; btn.disabled = false; btn.style.opacity = '1';
+    }
+    document.getElementById('daily-modal').classList.add('active');
+}
+function claimDailyReward() {
+    if (getTimeUntilNextDaily() > 0) { document.getElementById('daily-modal').classList.remove('active'); return; }
+    if (lastDailyClaim && Date.now() - lastDailyClaim > 48 * 60 * 60 * 1000) streak = 0;
+    let currentDay = (streak % 7) + 1; if (streak === 0) currentDay = 1;
+    money += DAILY_REWARDS[currentDay - 1]; lastDailyClaim = Date.now(); streak++; saveGame();
+    document.getElementById('daily-modal').classList.remove('active'); playSound('reward'); showToast(`🎁 +${DAILY_REWARDS[currentDay - 1]} € !`, 'gold'); refreshStatsUI(); checkBadges();
+    checkAndLoadSave();
+}
+function addXP(baseAmount) {
+    const amount = Math.floor(baseAmount * currentRunXpMultiplier); xp += amount; let leveledUp = false;
+    while (xpLevel < XP_PER_LEVEL.length - 1 && xp >= XP_PER_LEVEL[xpLevel]) {
+        xpLevel++; leveledUp = true; const bonus = 50 + xpLevel * 20; money += bonus; medals += 1; playSound('reward');
+        showToast(`⭐ NIVEAU ${xpLevel} ! +${bonus} €, +1 ⭐`, 'gold');
+    }
+    if (leveledUp) checkBadges(); saveGame();
+}
+function refreshXPUI() {
+    const nextThreshold = XP_PER_LEVEL[Math.min(xpLevel, XP_PER_LEVEL.length - 1)] || XP_PER_LEVEL[XP_PER_LEVEL.length - 1];
+    const currentThreshold = XP_PER_LEVEL[xpLevel - 1] || 0;
+    const progress = xpLevel >= XP_PER_LEVEL.length - 1 ? 100 : ((xp - currentThreshold) / (nextThreshold - currentThreshold)) * 100;
+    const el = document.getElementById('xp-display'); if (el) { el.innerText = `${xp} / ${nextThreshold} XP`; el.style.color = currentRunXpMultiplier > 1 ? '#fbbf24' : '#94a3b8'; if(currentRunXpMultiplier>1) el.innerText += ` (x${currentRunXpMultiplier})`; }
+    const lvl = document.getElementById('xp-level'); if (lvl) lvl.innerText = xpLevel;
+    const bar = document.getElementById('xp-bar'); if (bar) bar.style.width = Math.max(0, Math.min(100, progress)) + '%';
+}
+function unlockBadge(id) {
+    if (earnedBadges.includes(id)) return; const b = ALL_BADGES.find(x => x.id === id); if (!b) return;
+    earnedBadges.push(id); saveGame(); playSound('reward'); showToast(`🏆 SUCCÈS : ${b.name}`, 'gold');
+}
+function checkBadges() {
+    if (missionCount >= 1)  unlockBadge('first_mission'); if (missionCount >= 10) unlockBadge('ten_missions'); if (missionCount >= 50) unlockBadge('fifty_missions');
+    if (money >= 1000)  unlockBadge('rich_1k'); if (money >= 5000)  unlockBadge('rich_5k'); if (money >= 10000) unlockBadge('rich_10k');
+    if (noBavureStreak >= 5) unlockBadge('no_bavure_5'); if (stats.ordre>=80 && stats.prefet>=80 && stats.medias>=80 && stats.moral>=80) unlockBadge('full_stats');
+    if (streak >= 7) unlockBadge('week_streak'); if (xpLevel >= 5) unlockBadge('xp_level_5'); if (modesPlayed.manif && modesPlayed.stade && modesPlayed.trafic) unlockBadge('all_modes');
+}
+function openBadges() {
+    playSound('click'); ensureStateLoaded(); document.querySelectorAll('div[id$="-screen"], #game-container').forEach(el => el.style.display = 'none');
+    document.getElementById('badges-screen').style.display = 'block';
+    document.getElementById('badges-list').innerHTML = ALL_BADGES.map(b => {
+        const earned = earnedBadges.includes(b.id);
+        return `<div class="badge-item ${earned ? 'earned' : 'locked'}"><div style="display:flex; align-items:center; gap:10px;"><span style="font-size:22px;">${b.icon}</span><div><div style="font-weight:800; color:${earned ? '#fbbf24' : '#94a3b8'};">${b.name}</div><div style="font-size:9px; color:#64748b;">${b.desc}</div></div></div><span>${earned ? '✅' : '🔒'}</span></div>`;
+    }).join('');
+    document.getElementById('badges-count').innerText = `${earnedBadges.length}/${ALL_BADGES.length}`;
+}
+function openElite() {
+    playSound('click'); ensureStateLoaded(); document.querySelectorAll('div[id$="-screen"], #game-container').forEach(el => el.style.display = 'none');
+    document.getElementById('elite-screen').style.display = 'block'; document.getElementById('elite-medals').innerText = medals + " ⭐";
+    document.getElementById('elite-items-container').innerHTML = PERKS_LIST.map(p => {
+        const owned = perks[p.id];
+        return `<div class="elite-item"><div style="display:flex; align-items:center; gap:10px;"><span style="font-size:26px;">${p.icon}</span><div><div style="font-weight:800; color:${owned ? '#10b981' : '#fbbf24'};">${p.name}</div><div style="font-size:9px; color:#64748b;">${p.desc}</div></div></div>${owned ? '<span style="color:#10b981; font-weight:900; font-size:10px;">ACTIF</span>' : `<button type="button" onclick="buyPerk('${p.id}', ${p.cost})" style="width:auto; padding:6px 12px; background:linear-gradient(180deg,#f59e0b,#b45309); border:none; color:#fff; font-weight:900; font-size:10px;">${p.cost} ⭐</button>`}</div>`;
+    }).join('');
+}
+function buyPerk(id, cost) {
+    playSound('action'); if (perks[id]) return;
+    if (medals >= cost) { medals -= cost; perks[id] = true; saveGame(); openElite(); showToast("✅ Bonus débloqué !", 'gold'); }
+    else { showToast(`Manque ${cost - medals} ⭐ !`, "error"); }
+}
+function resumeGame() {
+    playSound('click'); const saved = localStorage.getItem(SAVE_KEY);
+    if (!saved) { showToast("Aucune sauvegarde.", "error"); return; }
+    try { loadStateFromSave(JSON.parse(saved)); } catch(e) { showToast("Erreur", "error"); return; }
+    if (!agentName) { showAgentNameModal(); return; } startMissionLoop();
+}
+function startNewCareer() {
+    playSound('click'); const saved = localStorage.getItem(SAVE_KEY);
+    if (saved && !confirm("Nouvelle carrière ? L'ancienne sera effacée (bonus Élite conservés).")) return;
+    const sM = medals, sP = JSON.parse(JSON.stringify(perks)), sB = [...earnedBadges], sD = lastDailyClaim, sS = streak, sPD = lastPlayDate;
+    applyDefaultState(); medals = sM; perks = sP; earnedBadges = sB; lastDailyClaim = sD; streak = sS; lastPlayDate = sPD;
+    if (perks.money) money = 500; if (perks.equip) { inventory.gilet = true; inventory.taser = true; }
+    if (perks.stats) { stats.ordre = 70; stats.medias = 70; stats.moral = 70; } if (perks.prefet) { stats.prefet = 85; } if (perks.xp) { currentRunXpMultiplier = 1.5; }
+    saveGame(); showAgentNameModal();
+}
+function restartCareerKeepMedals() {
+    playSound('click');
+    const sM = medals, sP = JSON.parse(JSON.stringify(perks)), sB = [...earnedBadges], sD = lastDailyClaim, sS = streak, sPD = lastPlayDate;
+    applyDefaultState(); medals = sM; perks = sP; earnedBadges = sB; lastDailyClaim = sD; streak = sS; lastPlayDate = sPD;
+    if (perks.money) money = 500; if (perks.equip) { inventory.gilet = true; inventory.taser = true; }
+    if (perks.stats) { stats.ordre = 70; stats.medias = 70; stats.moral = 70; } if (perks.prefet) { stats.prefet = 85; } if (perks.xp) { currentRunXpMultiplier = 1.5; }
+    saveGame(); showAgentNameModal();
+}
+function showAgentNameModal() { document.getElementById('agent-modal').classList.add('active'); setTimeout(() => document.getElementById('agent-name-input').focus(), 300); }
+function confirmAgentName() {
+    const input = document.getElementById('agent-name-input'); const name = (input.value || '').trim().toUpperCase();
+    if (name.length < 2) { showToast("Nom trop court", "error"); return; }
+    agentName = name.substring(0, 15); saveGame(); document.getElementById('agent-modal').classList.remove('active'); playSound('reward'); startMissionLoop();
+}
+function startMissionLoop() {
+    document.querySelectorAll('div[id$="-screen"], #game-container').forEach(el => el.style.display = 'none');
+    document.getElementById('game-container').style.display = 'block';
+    document.querySelectorAll('.mode-btn').forEach(b => b.classList.toggle('active', b.dataset.mode === currentMissionType));
+    checkStreakReset(); showDailyModalIfNeeded(); updateStreakOnPlay(); saveGame(); setTimeout(nextTurn, 50);
+}
+function goToMenu() {
+    playSound('click'); saveGame(); closeAdOverlay();
+    document.querySelectorAll('div[id$="-screen"], #game-container').forEach(el => el.style.display = 'none');
+    document.getElementById('menu-screen').style.display = 'flex'; checkAndLoadSave();
+}
+function resetCareer() { if (confirm("Tout effacer (y compris médailles) ?")) { localStorage.removeItem(SAVE_KEY); location.reload(); } }
+function changeMode(mode) {
+    if (!MODE_LABELS[mode] || mode === currentMissionType) return;
+    playSound('click'); currentMissionType = mode; modesPlayed[mode] = true; saveGame();
+    document.querySelectorAll('.mode-btn').forEach(b => b.classList.toggle('active', b.dataset.mode === mode));
+    checkBadges(); showToast("🔄 Mode : " + MODE_LABELS[mode].short);
+}
+function openShop() {
+    playSound('click'); ensureStateLoaded(); document.querySelectorAll('div[id$="-screen"], #game-container').forEach(el => el.style.display = 'none');
+    document.getElementById('shop-screen').style.display = 'block'; document.getElementById('shop-money').innerText = money + " €"; document.getElementById('shop-grade').innerText = grades[gradeIdx] || "GARDIEN";
+    document.getElementById('shop-items-container').innerHTML = `
+        <div class="shop-item"><span>🛡️ Gilet (400 €)</span> ${inventory.gilet ? '<b style="color:#10b981;">ACQUIS</b>' : '<button type="button" onclick="buyItem(\'gilet\', 400)" style="width:auto; padding:6px 12px;">Acheter</button>'}</div>
+        <div class="shop-item"><span>⚡ Taser (800 €)</span> ${inventory.taser ? '<b style="color:#10b981;">ACQUIS</b>' : '<button type="button" onclick="buyItem(\'taser\', 800)" style="width:auto; padding:6px 12px;">Acheter</button>'}</div>
+        <div class="shop-item"><span>🍸 Boîte (750 €)</span> ${inventory.club ? '<b style="color:#10b981;">ACQUIS</b>' : '<button type="button" onclick="buyItem(\'club\', 750)" style="width:auto; padding:6px 12px;">Acheter</button>'}</div>
+        <div class="shop-item"><span>🏠 Appart (1600 €)</span> ${inventory.appart ? '<b style="color:#10b981;">ACQUIS</b>' : '<button type="button" onclick="buyItem(\'appart\', 1600)" style="width:auto; padding:6px 12px;">Acheter</button>'}</div>
+        <div class="shop-item"><span>🏰 Maison (4500 €)</span> ${inventory.maison ? '<b style="color:#10b981;">ACQUIS</b>' : '<button type="button" onclick="buyItem(\'maison\', 4500)" style="width:auto; padding:6px 12px;">Acheter</button>'}</div>`;
+}
+function openApartment() {
+    playSound('click'); ensureStateLoaded(); document.querySelectorAll('div[id$="-screen"], #game-container').forEach(el => el.style.display = 'none');
+    document.getElementById('apartment-screen').style.display = 'block'; document.getElementById('appart-money').innerText = money + " €"; document.getElementById('appart-grade').innerText = grades[gradeIdx] || "GARDIEN";
+    document.getElementById('apartment-content').innerHTML = `<div class="shop-item"><span>🛌 Sieste (+20% Moral / 10 €)</span> <button type="button" onclick="restInAppart()" style="width:auto; padding:6px 12px;">Dormir</button></div><div class="shop-item"><span>📦 Équipements :</span> <b>${Object.keys(inventory).filter(k => inventory[k]).join(', ') || 'Aucun'}</b></div>`;
+}
+function restInAppart() { playSound('action'); if (money < 10) { showToast("10 € requis", "error"); return; } money -= 10; stats.moral = Math.min(100, stats.moral + 20); saveGame(); openApartment(); showToast("😴 Moral restauré !"); }
+function buyItem(item, cost) { playSound('action'); if (money < cost) { showToast(`Manque ${cost - money} € !`, "warning"); return; } money -= cost; inventory[item] = true; saveGame(); openShop(); showToast("✅ Acheté !"); checkBadges(); }
+function openHistory() { playSound('click'); document.getElementById('game-container').style.display = 'none'; document.getElementById('history-screen').style.display = 'block'; const c = document.getElementById('history-list-container'); if (!missionHistory.length) c.innerHTML = '<p style="color:#64748b; text-align:center;">Vide</p>'; else c.innerHTML = missionHistory.map(h => `<div style="margin-bottom:8px; border-bottom:1px solid rgba(148,163,184,0.1); padding-bottom:6px;"><b style="color:#a78bfa;">[C${h.cycle} J${h.day}]</b> ${h.text}<br><span style="color:#06b6d4;">Bilan : ${h.result}</span></div>`).join(''); }
+function closeHistory() { playSound('click'); document.getElementById('history-screen').style.display = 'none'; document.getElementById('game-container').style.display = 'block'; }
+function triggerAd(rewardText, callback) {
+    playSound('click'); adActiveCallback = callback;
+    const overlay = document.getElementById('ad-overlay'); document.getElementById('ad-reward-value').textContent = rewardText;
+    const btn = document.getElementById('btn-claim-reward'); btn.disabled = true; btn.textContent = '⏳ Patientez (5s)';
+    document.getElementById('ad-close').style.display = 'none'; overlay.classList.add('active');
+    let timeLeft = 5;
+    clearInterval(adCountdownInterval); adCountdownInterval = setInterval(() => {
+        timeLeft--;
+        if (timeLeft <= 0) {
+            clearInterval(adCountdownInterval); btn.disabled = false; btn.textContent = '🎁 RÉCUPÉRER'; document.getElementById('ad-close').style.display = 'block'; playSound('reward');
+            btn.onclick = () => { overlay.classList.remove('active'); if (callback) callback(); };
+        }
+    }, 1000);
+}
+function closeAdOverlay() { clearInterval(adCountdownInterval); document.getElementById('ad-overlay').classList.remove('active'); }
+function watchAdForMoney() { triggerAd('+300 €', () => { money += 300; saveGame(); checkBadges(); showToast("🎁 +300 € !", 'gold'); if (document.getElementById('shop-screen').style.display === 'block') openShop(); else if (document.getElementById('apartment-screen').style.display === 'block') openApartment(); else refreshStatsUI(); }); }
+function watchAdForStat(statName) { triggerAd(`+50%`, () => { stats[statName] = Math.min(100, stats[statName] + 50); saveGame(); refreshStatsUI(); checkBadges(); showToast(`🎁 +50% !`, 'gold'); }); }
+function getRandomItem(arr) { return !arr || !arr.length ? null : arr[Math.floor(Math.random() * arr.length)]; }
+function randRange(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
+function getRandomUnusedFromBank(cat, sub) {
+    cat = wordBanks[cat] ? cat : 'manif'; const arr = sub ? wordBanks[cat][sub] : wordBanks[cat]; if (!arr || !arr.length) return "Incident.";
+    let av = arr.filter(i => !usedElementsMemory.some(u => u.element === i));
+    if (!av.length) { usedElementsMemory = usedElementsMemory.filter(u => u.bank !== cat); av = arr; }
+    const item = av[Math.floor(Math.random() * av.length)]; usedElementsMemory.push({ element: item, bank: cat, dayUsed: day }); return item;
+}
+
+const wordBanks = {
+    manif: {
+        intros: ["Alerte maximale.", "Appel de détresse.", "Situation critique.", "Tension à son paroxysme.", "Le QG est sur les dents."],
+        sujets: ["Un groupe massif de manifestants", "Des syndicalistes déterminés", "Un cortège d'étudiants", "Des manifestants encagoulés", "Des activistes masqués", "Une foule en colère", "Des casseurs infiltrés", "Une centaine de contestataires"],
+        actions: ["provoque des dégradations", "érige des barricades enflammées", "lance des projectiles sur nos lignes", "saccage les vitrines", "force le cordon de sécurité", "met le feu à des véhicules", "érige un mur de palettes", "scande des slogans hostiles"],
+        lieux: ["sur le grand boulevard", "devant la préfecture", "près de la station de métro", "dans le quartier commerçant", "sur la place principale", "aux abords du palais de justice"],
+        tactique: ["Charger en formation serrée pour repousser la foule.", "Faire usage massif de gaz lacrymogènes.", "Encercler les meneurs avec les boucliers.", "Disperser le rassemblement par la force.", "Briser les barricades à l'aide du blindé.", "Interpeller les éléments les plus violents."],
+        doctrine: ["Engager le dialogue avec les délégués.", "Reculer pour apaiser les tensions.", "Créer un couloir humanitaire.", "Observer en retrait et documenter.", "Négocier l'évacuation pacifique.", "Baisser les boucliers en signe d'apaisement."],
+        initiative: ["Interpeller un agitateur au hasard.", "Confisquer les armes improvisées.", "Tendre un piège dans une rue adjacente.", "Agir sans attendre les ordres.", "Provoquer un face-à-face pour tester leur détermination.", "Bloquer les issues de secours en amont."]
+    },
+    stade: {
+        intros: ["Tension dans les tribunes.", "Alerte au stade.", "Incidents signalés.", "Le match est sur le point de déraper.", "Les stadiers sont débordés."],
+        sujets: ["Des supporters échauffés", "Un groupe de fans agressifs", "Des ultras encagoulés", "Des hooligans équipés", "Des spectateurs en colère", "Une faction de supporters rivaux", "Des individus alcoolisés"],
+        actions: ["provoquent des échauffourées", "forcent les portes d'accès", "lancent des fumigènes", "arrachent les sièges", "brisent les vitres", "tentent d'envahir la pelouse", "s'en prennent aux stadiers"],
+        lieux: ["dans les travées supérieures", "sur le parvis extérieur", "sur le parking officiel", "dans les coursives", "aux abords de la pelouse", "devant les buvettes"],
+        tactique: ["Charger la tribune pour reprendre le contrôle.", "Fermer hermétiquement les accès au kop.", "User de gaz lacrymogènes.", "Extraire les meneurs par la force.", "Déployer un cordon devant la pelouse.", "Briser les rangs des hooligans."],
+        doctrine: ["Dialoguer avec les capos.", "Laisser le match se dérouler.", "Ouvrir les buvettes pour détourner l'attention.", "Créer une zone tampon avec les stadiers.", "Faire une annonce au micro.", "Laisser les supporters s'auto-réguler."],
+        initiative: ["Interpeller un meneur discrètement.", "Fouiller un groupe suspect à l'entrée.", "Prendre position dans le tunnel.", "Confisquer des fumigènes.", "Suivre un groupe en civil.", "Bloquer une issue de secours par surprise."]
+    },
+    trafic: {
+        intros: ["Accident imminent.", "Alerte sur la route.", "Trafic bloqué.", "Course-poursuite engagée.", "Le péage est saturé."],
+        sujets: ["Des automobilistes agressifs", "Un convoi de poids lourds", "Des chauffards en excès de vitesse", "Un chauffard en fuite", "Un groupe de motards", "Un véhicule suspect", "Des jeunes en rodéo urbain"],
+        actions: ["bloquent les voies rapides", "refusent d'obtempérer", "foncent sur les barrages", "provoquent des carambolages", "prennent la fuite à contresens", "effectuent des figures dangereuses", "jettent des objets par la fenêtre"],
+        lieux: ["sur le périphérique", "au péage autoroutier", "dans le tunnel sous la rocade", "au carrefour central", "sur le pont à 4 voies", "sur l'autoroute urbaine"],
+        tactique: ["Déployer une herse pour crever les pneus.", "Lancer une course-poursuite musclée.", "Bloquer l'autoroute avec nos véhicules.", "Encercler le véhicule et briser les vitres.", "Forcer le chauffard à s'arrêter.", "Poursuite à moto dans les embouteillages."],
+        doctrine: ["Dévier la circulation pour éviter l'accident.", "Utiliser le haut-parleur pour avertir.", "Suivre le véhicule à distance.", "Demander des renforts avant d'agir.", "Fermer l'accès à l'autoroute en amont.", "Négocier avec le conducteur à distance."],
+        initiative: ["Faire un contrôle radar sauvage.", "Sortir le conducteur de force.", "Prendre en chasse à pied.", "Agir sans attendre le barrage.", "Immobiliser un véhicule suspect au hasard.", "Provoquer une queue de poisson."]
+    }
+};
+const meteos = [ { t:"☀️ Jour", o:0, m:0, mo:0, night:false }, { t:"🌙 Nuit", o:-1, m:0, mo:-1, night:true }, { t:"🌧️ Pluie", o:1, m:0, mo:-2, night:false }, { t:"🌩️ Orage", o:-2, m:-1, mo:-2, night:true } ];
+const randomEvents = [
+    { title:"🏛️ VISITE MINISTRE", desc:"Inspection ! (+8% Préfet, -3% Moral)", fx:{prefet:8,moral:-3} },
+    { title:"🎥 SCANDALE", desc:"Vidéo compromise ! (-10% Médias)", fx:{medias:-10} },
+    { title:"💵 PRIME", desc:"Fonds secrets ! (+50 €)", fx:{money:50} },
+    { title:"📢 GRÈVE", desc:"Tension ! (-6% Ordre)", fx:{ordre:-6} }
+];
+
+function refreshStatsUI() {
+    for (const s in stats) {
+        const el = document.getElementById('stat-' + s), bar = document.getElementById('bar-' + s), box = document.getElementById('box-' + s), v = stats[s];
+        if (el) { el.innerText = v + "%"; el.style.color = v <= 15 ? '#f43f5e' : v <= 40 ? '#f59e0b' : '#06b6d4'; }
+        if (bar) {
+            bar.style.width = v + "%";
+            bar.style.background = v <= 15 ? 'linear-gradient(90deg, #b91c1c, #ef4444)' : v <= 40 ? 'linear-gradient(90deg, #b45309, #f59e0b)' : 'linear-gradient(90deg, #06b6d4, #3b82f6, #8b5cf6)';
+        }
+        if (box) box.classList.toggle('critical', v <= 15);
+    }
+    const m = document.getElementById('player-money'); if (m) m.innerText = money + " €";
+    const d = document.getElementById('day-display'); if (d) d.innerText = `JOUR ${day} / 30`;
+    const g = document.getElementById('player-grade'); if (g) g.innerText = grades[gradeIdx] || "GARDIEN";
+    const a = document.getElementById('agent-display'); if (a) a.innerText = agentName || 'AGENT X';
+    const st = document.getElementById('streak-display'); if (st) st.innerText = `🔥 ${streak} j`;
+    // Difficulty
+    const diff = getDifficulty();
+    const diffEl = document.getElementById('difficulty-value');
+    if (diffEl) { diffEl.innerText = diff.name; diffEl.style.color = diff.color; diffEl.style.textShadow = `0 0 10px ${diff.color}`; }
+    const diffBar = document.getElementById('difficulty-bar');
+    if (diffBar) diffBar.style.borderColor = diff.color + '60';
+    refreshXPUI();
+}
+
+function generateScenario(type) {
+    const intro = getRandomUnusedFromBank(type, 'intros');
+    const sujet = getRandomUnusedFromBank(type, 'sujets');
+    const action = getRandomUnusedFromBank(type, 'actions');
+    const lieu = getRandomUnusedFromBank(type, 'lieux');
+    currentScenarioLieu = lieu;
+    const templates = [
+        `${intro} ${sujet} ${action} ${lieu}.`,
+        `${intro} Situation à ${lieu} : ${sujet.toLowerCase()} ${action}.`,
+        `${intro} Les forces de l'ordre sont déployées ${lieu}, où ${sujet.toLowerCase()} ${action}.`,
+        `${lieu} : ${sujet} ${action}. ${intro}`,
+        `${intro} On signale que ${sujet.toLowerCase()} ${action} ${lieu}.`
+    ];
+    return getRandomItem(templates);
+}
+
+function nextTurn() {
+    usedElementsMemory = usedElementsMemory.filter(i => (day - i.dayUsed) < 25);
+    currentEvent = null;
+    if (Math.random() < 0.25) { currentEvent = getRandomItem(randomEvents); if (currentEvent?.fx) { const fx = currentEvent.fx; if (fx.prefet) stats.prefet = Math.max(0, Math.min(100, stats.prefet + fx.prefet)); if (fx.medias) stats.medias = Math.max(0, Math.min(100, stats.medias + fx.medias)); if (fx.moral) stats.moral = Math.max(0, Math.min(100, stats.moral + fx.moral)); if (fx.ordre) stats.ordre = Math.max(0, Math.min(100, stats.ordre + fx.ordre)); if (fx.money) money += fx.money; } }
+
+    const m = getRandomItem(meteos) || meteos[0]; isNight = m.night;
+    let weatherText = m.t;
+    if (currentEvent) weatherText += ` | <span style="color:#fbbf24;">${currentEvent.title}</span>`;
+    document.getElementById('weather-display').innerHTML = weatherText;
+
+    if (inventory.appart) stats.moral = Math.min(100, stats.moral + 1); if (inventory.maison) stats.prefet = Math.min(100, stats.prefet + 1); if (inventory.club) stats.moral = Math.min(100, stats.moral + 2);
+
+    const diffMult = getDifficulty().mult;
+
+    if (bavureStreak >= 2) {
+        stats.ordre = Math.max(0, stats.ordre - Math.round(bavureStreak * 4 * diffMult));
+        stats.prefet = Math.max(0, stats.prefet - Math.round(bavureStreak * 3 * diffMult));
+    }
+    for (const s in stats) {
+        const wMod = s === 'ordre' ? m.o : s === 'medias' ? m.m : s === 'moral' ? m.mo : 0;
+        const cMod = cons[s] || 0;
+        const total = wMod + cMod;
+        const scaled = total > 0 ? total : Math.round(total * diffMult);
+        stats[s] = Math.max(0, Math.min(100, stats[s] + scaled));
+    }
+
+    if (stats.ordre <= 0 || stats.prefet <= 0 || stats.medias <= 0 || stats.moral <= 0) {
+        document.querySelectorAll('div[id$="-screen"], #game-container').forEach(el => el.style.display = 'none');
+        document.getElementById('gameover-screen').style.display = 'block'; document.getElementById('end-text').innerText = `Radié au Jour ${day}.`;
+        const earnedMedals = Math.floor(missionCount / 5) + cycle; if (earnedMedals > 0) { medals += earnedMedals; document.getElementById('end-text').innerHTML += `<br><br><span style="color:#fbbf24; font-weight:900;">+${earnedMedals} ⭐ !</span>`; saveGame(); }
+        document.getElementById('revive-container').innerHTML = `<p style="color:#f43f5e; font-size:10px;">Vous devez recommencer.</p>`; return;
+    }
+    saveGame();
+
+    currentScenarioText = generateScenario(currentMissionType);
+    document.getElementById('dialogue-speaker').innerText = "Radio"; document.getElementById('dialogue-text').innerHTML = currentEvent ? `« Alerte : ${currentEvent.desc} »` : "« Évaluez la menace. »";
+    document.getElementById('situation-text').innerHTML = `<strong>[${MODE_LABELS[currentMissionType].long.toUpperCase()}]</strong> ${currentScenarioText}<br><br><span style="color:#64748b; font-size:9px;">Précédent : ${cons.text}</span>`;
+    refreshStatsUI(); renderStage(currentScenarioLieu);
+    const container = document.getElementById('choices-container'); container.innerHTML = "";
+    const taserBonus = inventory.taser ? 4 : 0, giletBonus = inventory.gilet ? 3 : 0;
+    createChoiceButton(container, `⚔️ [TACTIQUE] ${getRandomUnusedFromBank(currentMissionType, 'tactique')}`, { ordre:randRange(5,10), prefet:randRange(3,6), medias:-randRange(8,14), moral:randRange(2,4)+taserBonus }, { text:"Intervention musclée réussie", ordre:2, prefet:1, medias:-4, moral:1 }, Math.random() > 0.8 ? randRange(5,10) : 0, "btn-tactique");
+    createChoiceButton(container, `🛡️ [DOCTRINE] ${getRandomUnusedFromBank(currentMissionType, 'doctrine')}`, { ordre:-randRange(3,7), prefet:-randRange(2,4), medias:randRange(8,14), moral:-randRange(1,3)+giletBonus }, { text:"Apaisement et dialogue", ordre:-2, prefet:-1, medias:4, moral:-1 }, Math.random() > 0.8 ? randRange(5,15) : 0, "btn-doctrine");
+    createChoiceButton(container, `⚡ [INITIATIVE] ${getRandomUnusedFromBank(currentMissionType, 'initiative')}`, { ordre:randRange(3,12), prefet:-randRange(4,10), medias:-randRange(12,22), moral:randRange(-3,6) }, { text:"Décision improvisée risquée", ordre:1, prefet:-1, medias:-6, moral:-1 }, Math.random() > 0.7 ? randRange(10,20) : 0, "btn-initiative");
+    const pauseBtn = document.createElement('button'); pauseBtn.type = 'button'; pauseBtn.className = 'btn-pause'; pauseBtn.innerHTML = `☕ [PAUSE] (15 €)`;
+    pauseBtn.onclick = () => { playSound('action'); if (money < 15) { showToast("15 € requis", "error"); return; } money -= 15; stats.moral = Math.min(100, stats.moral + 15); stats.ordre = Math.max(0, stats.ordre - 2); saveGame(); nextTurn(); };
+    container.appendChild(pauseBtn);
+}
+
+function renderStage(lieu) {
+    const stage = document.getElementById('visual-stage');
+    const vc = document.getElementById('stage-visual-elements');
+    const carsLayer = document.getElementById('cars-layer');
+    if (!vc || !carsLayer) return;
+    vc.innerHTML = ""; carsLayer.innerHTML = "";
+    const skyManif = isNight ? "#0f172a" : "#1e1b4b";
+    const bldgManif = isNight ? "#020617" : "#090d16";
+    const skyStade = isNight ? "#020617" : "#0ea5e9";
+    const groundStade = isNight ? "#064e3b" : "#15803d";
+    const skyRoute = isNight ? "#020617" : "#38bdf8";
+    const roadRoute = isNight ? "#0f172a" : "#1e293b";
+
+    if (currentMissionType === 'stade') {
+        stage.style.background = skyStade;
+        if (lieu.includes("parking")) {
+            vc.innerHTML = `<svg width="100%" height="100%" viewBox="0 0 480 175" preserveAspectRatio="none" style="position:absolute;inset:0;"><rect width="480" height="175" fill="${skyStade}"/><rect x="0" y="100" width="480" height="75" fill="#334155"/><line x1="0" y1="120" x2="480" y2="120" stroke="#cbd5e1" stroke-width="2" stroke-dasharray="10,10" opacity="0.5"/><rect x="50" y="70" width="80" height="40" rx="4" fill="#1e40af"/><rect x="350" y="70" width="80" height="40" rx="4" fill="#b91c1c"/>${isNight ? '<circle cx="50" cy="40" r="30" fill="#fbbf24" opacity="0.4" filter="blur(15px)"/><circle cx="430" cy="40" r="30" fill="#fbbf24" opacity="0.4" filter="blur(15px)"/>' : ''}</svg><svg width="40" height="65" viewBox="0 0 45 70" style="position:absolute; right:80px; bottom:10px; z-index:2;"><rect x="12" y="4" width="21" height="21" rx="10" fill="#d1b5a5"/><rect x="6" y="24" width="33" height="34" rx="6" fill="#dc2626"/></svg><svg width="40" height="65" viewBox="0 0 45 70" style="position:absolute; right:20px; bottom:10px; z-index:2;"><rect x="12" y="4" width="21" height="21" rx="10" fill="#fbcfe8"/><rect x="6" y="24" width="33" height="34" rx="6" fill="#15803d"/></svg>`;
+        } else if (lieu.includes("pelouse") || lieu.includes("tribune") || lieu.includes("coursive") || lieu.includes("buvettes")) {
+            vc.innerHTML = `<svg width="100%" height="100%" viewBox="0 0 480 175" preserveAspectRatio="none" style="position:absolute;inset:0;"><rect width="480" height="175" fill="${skyStade}"/><rect x="0" y="80" width="480" height="95" fill="${groundStade}"/><line x1="0" y1="80" x2="480" y2="80" stroke="#fff" stroke-width="2"/><line x1="240" y1="80" x2="240" y2="175" stroke="#fff" stroke-width="2"/><rect x="0" y="0" width="480" height="60" fill="#1e293b"/><circle cx="240" cy="10" r="40" fill="${isNight ? '#fbbf24' : '#e2e8f0'}" opacity="0.6" filter="blur(15px)"/><rect x="100" y="20" width="10" height="40" fill="#cbd5e1"/><rect x="370" y="20" width="10" height="40" fill="#cbd5e1"/>${isNight ? '<path d="M100,60 L50,175 L430,175 L380,60 Z" fill="#fef08a" opacity="0.15"/>' : ''}</svg><svg width="40" height="65" viewBox="0 0 45 70" style="position:absolute; left:100px; bottom:20px; z-index:2;"><rect x="12" y="4" width="21" height="21" rx="10" fill="#d1b5a5"/><rect x="6" y="24" width="33" height="34" rx="6" fill="#dc2626"/></svg><svg width="40" height="65" viewBox="0 0 45 70" style="position:absolute; right:100px; bottom:20px; z-index:2;"><rect x="12" y="4" width="21" height="21" rx="10" fill="#fbcfe8"/><rect x="6" y="24" width="33" height="34" rx="6" fill="#15803d"/></svg>`;
+        } else {
+            vc.innerHTML = `<svg width="100%" height="100%" viewBox="0 0 480 175" preserveAspectRatio="none" style="position:absolute;inset:0;"><rect width="480" height="175" fill="${skyStade}"/><rect x="0" y="110" width="480" height="65" fill="#475569"/><rect x="50" y="110" width="380" height="15" fill="#94a3b8"/><rect x="80" y="125" width="320" height="15" fill="#64748b"/><rect x="150" y="0" width="180" height="110" fill="#1e293b"/><rect x="180" y="30" width="120" height="40" fill="${isNight ? '#fef08a' : '#38bdf8'}" opacity="0.4"/>${isNight ? '<circle cx="240" cy="50" r="30" fill="#fef08a" opacity="0.3" filter="blur(10px)"/>' : ''}</svg><svg width="40" height="65" viewBox="0 0 45 70" style="position:absolute; left:200px; bottom:15px; z-index:2;"><rect x="12" y="4" width="21" height="21" rx="10" fill="#d1b5a5"/><rect x="6" y="24" width="33" height="34" rx="6" fill="#dc2626"/></svg><svg width="40" height="65" viewBox="0 0 45 70" style="position:absolute; right:200px; bottom:15px; z-index:2;"><rect x="12" y="4" width="21" height="21" rx="10" fill="#fbcfe8"/><rect x="6" y="24" width="33" height="34" rx="6" fill="#15803d"/></svg>`;
+        }
+    } else if (currentMissionType === 'trafic') {
+        stage.style.background = skyRoute;
+        carsLayer.innerHTML = `<div class="car car-fast" style="animation-delay: 0s; left: 100%;"><svg width="80" height="40" viewBox="0 0 75 36"><rect x="2" y="8" width="71" height="22" rx="5" fill="#2563eb"/><circle cx="16" cy="30" r="6" fill="#020617"/><circle cx="58" cy="30" r="6" fill="#020617"/><rect x="34" y="5" width="12" height="7" rx="3" fill="#f43f5e" class="siren"/></svg></div><div class="car car-slow" style="animation-delay: 1.5s; left: 100%;"><svg width="120" height="50" viewBox="0 0 120 50"><rect x="2" y="10" width="80" height="35" rx="3" fill="#f8fafc"/><rect x="82" y="20" width="30" height="25" rx="3" fill="#475569"/><circle cx="20" cy="45" r="6" fill="#020617"/><circle cx="60" cy="45" r="6" fill="#020617"/><circle cx="100" cy="45" r="6" fill="#020617"/></svg></div><div class="car car-fast" style="animation-delay: 2.5s; left: 100%;"><svg width="60" height="30" viewBox="0 0 65 32"><rect x="2" y="6" width="61" height="20" rx="4" fill="#dc2626"/><path d="M15,6 L22,1 L43,1 L50,6 Z" fill="#b91c1c"/><circle cx="14" cy="26" r="4.5" fill="#020617"/><circle cx="51" cy="26" r="4.5" fill="#020617"/></svg></div>`;
+        if (lieu.includes("tunnel")) {
+            vc.innerHTML = `<svg width="100%" height="100%" viewBox="0 0 480 175" preserveAspectRatio="none" style="position:absolute;inset:0;"><rect width="480" height="175" fill="#020617"/><path d="M0,175 L0,50 Q240,-50 480,50 L480,175 Z" fill="#1e293b"/><rect x="0" y="120" width="480" height="55" fill="${roadRoute}"/><line x1="0" y1="145" x2="480" y2="145" stroke="#fbbf24" stroke-width="4" stroke-dasharray="20,15"/><path d="M0,50 Q240,-50 480,50" stroke="#06b6d4" stroke-width="4" fill="none" opacity="0.8" filter="drop-shadow(0 0 15px #06b6d4)"/><path d="M0,70 Q240,-30 480,70" stroke="#06b6d4" stroke-width="2" fill="none" opacity="0.4"/></svg>`;
+        } else if (lieu.includes("périphérique") || lieu.includes("pont") || lieu.includes("autoroute") || lieu.includes("péage")) {
+            vc.innerHTML = `<svg width="100%" height="100%" viewBox="0 0 480 175" preserveAspectRatio="none" style="position:absolute;inset:0;"><rect width="480" height="175" fill="${skyRoute}"/><rect x="0" y="110" width="480" height="65" fill="${roadRoute}"/><line x1="0" y1="130" x2="480" y2="130" stroke="#fbbf24" stroke-width="3" stroke-dasharray="20,15"/><line x1="0" y1="155" x2="480" y2="155" stroke="#fbbf24" stroke-width="3" stroke-dasharray="20,15"/><rect x="0" y="105" width="480" height="5" fill="#cbd5e1"/>${isNight ? '<circle cx="50" cy="20" r="20" fill="#fbbf24" opacity="0.5" filter="blur(8px)"/><circle cx="430" cy="20" r="20" fill="#fbbf24" opacity="0.5" filter="blur(8px)"/>' : ''}</svg>`;
+        } else {
+            vc.innerHTML = `<svg width="100%" height="100%" viewBox="0 0 480 175" preserveAspectRatio="none" style="position:absolute;inset:0;"><rect width="480" height="175" fill="${skyRoute}"/><rect x="0" y="80" width="480" height="95" fill="${roadRoute}"/><rect x="180" y="80" width="120" height="95" fill="${roadRoute}"/><line x1="0" y1="100" x2="180" y2="100" stroke="#cbd5e1" stroke-width="4" stroke-dasharray="10,10"/><line x1="300" y1="100" x2="480" y2="100" stroke="#cbd5e1" stroke-width="4" stroke-dasharray="10,10"/><rect x="20" y="20" width="10" height="30" fill="#1e293b"/><circle cx="25" cy="28" r="3" fill="#ef4444"/><circle cx="25" cy="42" r="3" fill="#22c55e"/><rect x="450" y="20" width="10" height="30" fill="#1e293b"/><circle cx="455" cy="28" r="3" fill="#ef4444"/><circle cx="455" cy="42" r="3" fill="#22c55e"/></svg>`;
+        }
+    } else {
+        stage.style.background = skyManif;
+        if (lieu.includes("préfecture") || lieu.includes("palais")) {
+            vc.innerHTML = `<svg width="100%" height="100%" viewBox="0 0 480 175" preserveAspectRatio="none" style="position:absolute;inset:0;"><rect width="480" height="175" fill="${skyManif}"/><rect x="0" y="150" width="480" height="25" fill="#1e293b"/><rect x="100" y="30" width="280" height="120" fill="#0f172a"/><rect x="120" y="60" width="20" height="90" fill="#334155"/><rect x="180" y="60" width="20" height="90" fill="#334155"/><rect x="240" y="60" width="20" height="90" fill="#334155"/><rect x="300" y="60" width="20" height="90" fill="#334155"/><rect x="340" y="60" width="20" height="90" fill="#334155"/><rect x="100" y="20" width="280" height="10" fill="#1e293b"/>${isNight ? '<rect x="150" y="80" width="180" height="40" fill="#fef08a" opacity="0.2" filter="blur(5px)"/>' : ''}</svg><div style="position:absolute; bottom:15px; left:20px; z-index:2;"><svg width="40" height="60" viewBox="0 0 45 65"><rect x="12" y="4" width="21" height="21" rx="10" fill="#d1b5a5"/><rect x="6" y="24" width="33" height="32" rx="6" fill="#dc2626"/><circle cx="36" cy="30" r="9" fill="#f97316" class="flame-anim"/></svg></div><div style="position:absolute; bottom:15px; right:20px; z-index:2;"><svg width="40" height="65" viewBox="0 0 45 70"><rect x="12" y="4" width="21" height="21" rx="10" fill="#fbcfe8"/><rect x="6" y="24" width="33" height="34" rx="6" fill="#15803d" stroke="#22c55e" stroke-width="2"/></svg></div>`;
+        } else if (lieu.includes("métro")) {
+            vc.innerHTML = `<svg width="100%" height="100%" viewBox="0 0 480 175" preserveAspectRatio="none" style="position:absolute;inset:0;"><rect width="480" height="175" fill="#020617"/><path d="M0,175 L0,40 Q240,-20 480,40 L480,175 Z" fill="#1e293b"/><rect x="0" y="140" width="480" height="35" fill="#334155"/><path d="M200,140 L200,120 L220,120 L220,100 L240,100 L240,80 L260,80" stroke="#64748b" stroke-width="2" fill="none"/><path d="M280,140 L280,120 L260,120 L260,100 L240,100" stroke="#64748b" stroke-width="2" fill="none"/>${isNight ? '<circle cx="240" cy="30" r="15" fill="#fbbf24" opacity="0.8" filter="drop-shadow(0 0 25px #fbbf24)"/>' : ''}</svg><div style="position:absolute; bottom:15px; left:20px; z-index:2;"><svg width="40" height="60" viewBox="0 0 45 65"><rect x="12" y="4" width="21" height="21" rx="10" fill="#d1b5a5"/><rect x="6" y="24" width="33" height="32" rx="6" fill="#dc2626"/></svg></div><div style="position:absolute; bottom:15px; right:20px; z-index:2;"><svg width="40" height="65" viewBox="0 0 45 70"><rect x="12" y="4" width="21" height="21" rx="10" fill="#fbcfe8"/><rect x="6" y="24" width="33" height="34" rx="6" fill="#15803d" stroke="#22c55e" stroke-width="2"/></svg></div>`;
+        } else {
+            vc.innerHTML = `<svg width="100%" height="100%" viewBox="0 0 480 175" preserveAspectRatio="none" style="position:absolute;inset:0;"><rect width="480" height="175" fill="${skyManif}"/><rect x="20" y="40" width="80" height="135" fill="${bldgManif}"/><rect x="120" y="20" width="100" height="155" fill="#020617"/><rect x="260" y="50" width="90" height="125" fill="#0f172a"/><rect x="380" y="30" width="100" height="145" fill="${bldgManif}"/><rect x="30" y="60" width="10" height="10" fill="${isNight ? '#fbbf24' : '#38bdf8'}" opacity="0.6"/><rect x="60" y="60" width="10" height="10" fill="${isNight ? '#fbbf24' : '#38bdf8'}" opacity="0.6"/><rect x="140" y="40" width="10" height="10" fill="${isNight ? '#fbbf24' : '#38bdf8'}" opacity="0.6"/><rect x="0" y="155" width="480" height="20" fill="#0f172a"/><path d="M50,155 L70,135 L90,155 Z" fill="#f97316" class="flame-anim"/><path d="M150,155 L170,130 L190,155 Z" fill="#f97316" class="flame-anim" style="animation-delay:0.2s;"/><path d="M350,155 L370,125 L390,155 Z" fill="#f97316" class="flame-anim" style="animation-delay:0.4s;"/>${isNight ? '<circle cx="240" cy="20" r="30" fill="#fbbf24" opacity="0.4" filter="blur(15px)"/>' : ''}</svg><div style="position:absolute; bottom:15px; left:20px; z-index:2;"><svg width="40" height="60" viewBox="0 0 45 65"><rect x="12" y="4" width="21" height="21" rx="10" fill="#d1b5a5"/><rect x="6" y="24" width="33" height="32" rx="6" fill="#dc2626"/><circle cx="36" cy="30" r="9" fill="#f97316" class="flame-anim"/></svg></div><div style="position:absolute; bottom:15px; right:20px; z-index:2;"><svg width="40" height="65" viewBox="0 0 45 70"><rect x="12" y="4" width="21" height="21" rx="10" fill="#fbcfe8"/><rect x="6" y="24" width="33" height="34" rx="6" fill="#15803d" stroke="#22c55e" stroke-width="2"/></svg></div>`;
+        }
+    }
+}
+
+function createChoiceButton(parent, text, effects, consequence, prime, cls) {
+    const btn = document.createElement('button'); btn.type = 'button'; btn.className = cls; btn.innerText = text;
+    btn.onclick = () => {
+        playSound('action');
+        const scaledEffects = applyDifficulty(effects);
+        for (const s in scaledEffects) stats[s] = Math.max(0, Math.min(100, stats[s] + scaledEffects[s]));
+        if (cls === 'btn-tactique' || cls === 'btn-initiative') { bavureStreak++; noBavureStreak = 0; } else { bavureStreak = Math.max(0, bavureStreak - 1); noBavureStreak++; }
+        if (noBavureStreak >= 5) unlockBadge('no_bavure_5');
+        const totalGain = (salaries[Math.min(gradeIdx, salaries.length - 1)] || 30) + prime;
+        money += totalGain; missionCount++; cons = consequence; modesPlayed[currentMissionType] = true;
+        missionHistory.unshift({ day, cycle, text: currentScenarioText, result: cons.text }); if (missionHistory.length > 25) missionHistory.pop();
+        addXP(XP_PER_MISSION); saveGame();
+        const container = document.getElementById('choices-container'); container.innerHTML = "";
+        const successEl = document.createElement('div'); successEl.className = 'mission-success'; successEl.innerText = '✓ MISSION RÉUSSIE'; container.appendChild(successEl);
+        let endText = `Salaire + Prime : <b style="color:#10b981;">+${totalGain} €</b>`;
+        if (bavureStreak >= 2) endText += `<br><span style="color:#f43f5e; font-weight:bold;">⚠️ Attention : méthode musclée répétée !</span>`;
+        if (day === 30) {
+            const ordreMissing = 45 - stats.ordre; const prefetMissing = 40 - stats.prefet;
+            if (stats.ordre >= 45 && stats.prefet >= 40) {
+                if (gradeIdx < grades.length - 1) { gradeIdx++; playSound('reward'); endText = `🏆 <strong style="color:#fbbf24;">PROMOTION ! Tu deviens ${grades[gradeIdx]} !</strong>`; unlockBadge('promotion'); }
+                else { playSound('reward'); endText = `⭐ <strong>LÉGENDE SUPRÊME ! Cycle ${cycle} bouclé.</strong>`; }
+            } else { let miss = []; if (ordreMissing > 0) miss.push(`${ordreMissing}% Ordre`); if (prefetMissing > 0) miss.push(`${prefetMissing}% Préfet`); endText = `⚠️ <strong style="color:#f59e0b;">PROMOTION REFUSÉE — Il manquait ${miss.join(' et ')} !</strong>`; }
+            day = 1; cycle++;
+        } else { day++; }
+        const nextItem = !inventory.gilet ? 400 : !inventory.taser ? 800 : !inventory.club ? 750 : !inventory.appart ? 1600 : !inventory.maison ? 4500 : 0;
+        if (nextItem > 0) { const missing = nextItem - money; if (missing > 0 && missing <= 50) endText += `<br><span style="color:#fbbf24; font-weight:bold;">À ${missing} € près pour ton prochain achat !</span>`; }
+        document.getElementById('dialogue-speaker').innerText = "Rapport"; document.getElementById('dialogue-text').innerText = "Service terminé.";
+        document.getElementById('situation-text').innerHTML = `<strong>📋 FIN DE SERVICE</strong><br><br>${endText}<br><br><span style="color:#64748b; font-size:9px;">🔄 Prochaine : <b style="color:#06b6d4;">${MODE_LABELS[currentMissionType].long}</b></span>`;
+        const nextBtn = document.createElement('button'); nextBtn.type = 'button'; nextBtn.className = "btn-next giant"; nextBtn.innerText = "➡️ MISSION SUIVANTE"; nextBtn.onclick = nextTurn; container.appendChild(nextBtn);
+        refreshStatsUI(); checkBadges(); saveGame();
+    };
+    parent.appendChild(btn);
+}
+</script>
+</body>
+</html>
